@@ -4153,13 +4153,14 @@ label.btn { display: inline-flex; align-items: center; }
     });
   }
   function gConnected() { return !!gmcp && !!g.email && g.conn !== false; }
+  function cloudOn() { return !!cloudUser; }
   function renderAvatar() {
     var b = el("gav");
-    var on = gConnected();
+    var on = gConnected() || cloudOn();
     b.classList.toggle("on", on);
-    if (on) b.textContent = g.email.charAt(0).toUpperCase();
+    if (on) b.textContent = (g.email || (cloudUser && cloudUser.email) || "?").charAt(0).toUpperCase();
     else b.innerHTML = IC_USER;
-    b.title = on ? "Google Agenda : " + g.email : "Compte Google Agenda";
+    b.title = on ? "Connecté : " + (g.email || (cloudUser && cloudUser.email) || "") : "Compte";
   }
   function gLoadCals() {
     if (!gmcp) return Promise.resolve();
@@ -4184,6 +4185,24 @@ label.btn { display: inline-flex; align-items: center; }
       b.type = "button";
       b.addEventListener("click", fn);
       return b;
+    }
+    if (!gmcp && window.PlanningCloud) {
+      if (cloudUser) {
+        pop.appendChild(mk("h4", "", "Compte"));
+        pop.appendChild(mk("p", "gm", "Connecté · " + cloudUser.email));
+        pop.appendChild(mk("p", "gh", "Tes tâches et notes sont enregistrées en ligne. Gmail et Google Agenda arriveront dans une prochaine étape."));
+        var ac = mk("div", "gact");
+        ac.appendChild(btn("Se déconnecter", "btn small", function () { window.PlanningCloud.signOut().then(function () { location.reload(); }); }));
+        pop.appendChild(ac);
+      } else {
+        pop.appendChild(mk("h4", "", "Se connecter"));
+        pop.appendChild(mk("p", "gm", "Connecte-toi avec Google pour enregistrer tes données en ligne et les retrouver sur tous tes appareils."));
+        var ac2 = mk("div", "gact");
+        ac2.appendChild(btn("Se connecter avec Google", "btn small primary", function () { window.PlanningCloud.signIn(); }));
+        pop.appendChild(ac2);
+        pop.appendChild(mk("p", "gh", "Tant que tu n'es pas connecté, tout reste sur cet appareil."));
+      }
+      return;
     }
     if (!gmcp) {
       pop.appendChild(mk("h4", "", "Google Agenda indisponible ici"));
@@ -4279,6 +4298,41 @@ label.btn { display: inline-flex; align-items: center; }
     if (appMode === "mail" && gmcp && mail.st === "idle") mailLoad(); else renderMail();
   })();
 
+  /* ---------- Hors Claude : Supabase (connexion Google + données en ligne) ---------- */
+  var cloudUser = null;
+  function loadScript(src) {
+    return new Promise(function (res, rej) {
+      var sc = document.createElement("script");
+      sc.src = src;
+      sc.onload = res;
+      sc.onerror = function () { rej(new Error("script")); };
+      document.head.appendChild(sc);
+    });
+  }
+  async function loadCloud() {
+    try {
+      await loadScript("config.js");
+      await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js");
+      await loadScript("supabase-db.js");
+    } catch (e) { return null; }
+    if (!window.PlanningCloud) return null;
+    var d = await window.PlanningCloud.init();
+    cloudUser = window.PlanningCloud.user();
+    renderAvatar();
+    return d;
+  }
+  async function migrateLocal() {
+    var snap = await db.collection("jours").limit(2000).get();
+    var remote = {};
+    snap.docs.forEach(function (d) { remote[d.id] = 1; });
+    var keys = {};
+    Object.keys(data).concat(Object.keys(notes)).forEach(function (k) { keys[k] = 1; });
+    var todo = Object.keys(keys).filter(function (k) { return !remote[k]; });
+    for (var i = 0; i < todo.length; i++) await persist(todo[i]);
+    var ts = await db.doc("reglages/tags").get();
+    if ((!ts.exists || !((ts.data() || {}).liste || []).length) && tags.length) saveTags();
+  }
+
   /* ---------- Démarrage ---------- */
   loadPrefsLocal();
   loadFold();
@@ -4295,6 +4349,13 @@ label.btn { display: inline-flex; align-items: center; }
   })();
   (async function () {
     try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch (e) { db = null; }
+    if (!(window.claude && window.claude.use)) {
+      db = await loadCloud();
+      if (db) {
+        loadLocal();
+        try { await migrateLocal(); } catch (e) {}
+      }
+    }
     if (db) {
       db.collection("jours").onSnapshot(function (snap) {
         var nextD = {}, nextN = {};
