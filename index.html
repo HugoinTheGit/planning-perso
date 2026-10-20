@@ -4024,6 +4024,7 @@ label.btn { display: inline-flex; align-items: center; }
       if (g.email) gSave(); else if (!g.cals.length && !g.calsErr) setTimeout(gLoadCals, 0);
     }, function (e) {
       rec.err = (e && e.code) || "upstream_error";
+      rec.detail = e && e.code && e.message !== e.code ? String(e.message).slice(0, 220) : "";
       if (gState(rec.err) === "auth") g.conn = false;
       if (gState(rec.err) !== "error" || !g.conn) g.st = gState(rec.err);
     }).then(function () {
@@ -4112,6 +4113,7 @@ label.btn { display: inline-flex; align-items: center; }
       else msg = "Impossible de charger les réunions pour le moment.";
       if (reco) label = "Reconnecter Google";
       body.appendChild(mk("p", "gmsg", msg));
+      if (rec.detail) body.appendChild(mk("p", "gmsg", "Détail Google : " + rec.detail));
       var b = mk("button", "btn small", label);
       b.type = "button";
       b.addEventListener("click", function () { if (reco && window.PlanningCloud) window.PlanningCloud.signIn(); else gLoadDay(sel, true); });

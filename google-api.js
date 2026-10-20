@@ -50,7 +50,7 @@
       if (r.status === 403) {
         return r.json().catch(function () { return {}; }).then(function (j) {
           var s = JSON.stringify(j);
-          if (/insufficient|scope|accessNotConfigured|SERVICE_DISABLED/i.test(s)) throw err("consent_required");
+          if (/insufficient|scope|accessNotConfigured|SERVICE_DISABLED/i.test(s)) throw err("consent_required", (j.error && j.error.message) || "");
           throw err("upstream_error");
         });
       }
