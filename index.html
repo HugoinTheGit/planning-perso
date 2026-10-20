@@ -4309,7 +4309,7 @@ label.btn { display: inline-flex; align-items: center; }
   })();
 
   /* ---------- Hors Claude : Supabase (connexion Google + données en ligne) ---------- */
-  var cloudUser = null;
+  var cloudUser;
   function loadScript(src) {
     return new Promise(function (res, rej) {
       var sc = document.createElement("script");
@@ -4319,7 +4319,7 @@ label.btn { display: inline-flex; align-items: center; }
       document.head.appendChild(sc);
     });
   }
-  var cloudP = null;
+  var cloudP;
   function loadCloud() {
     if (!cloudP) cloudP = (async function () {
       try {
