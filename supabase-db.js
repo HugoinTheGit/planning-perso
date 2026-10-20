@@ -126,6 +126,15 @@
         }
       });
     },
-    signOut: function () { if (window.GoogleApi) window.GoogleApi.clearToken(); return sb.auth.signOut().then(function () { session = null; }); }
+    signOut: function () {
+      if (window.GoogleApi) window.GoogleApi.clearToken();
+      session = null;
+      var done = function () {
+        try {
+          Object.keys(localStorage).forEach(function (k) { if (k.indexOf("sb-") === 0 || k === "__signed") localStorage.removeItem(k); });
+        } catch (e) {}
+      };
+      return sb.auth.signOut({ scope: "local" }).then(done, done);
+    }
   };
 })();

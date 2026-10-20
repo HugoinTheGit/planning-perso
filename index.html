@@ -4191,7 +4191,10 @@ label.btn { display: inline-flex; align-items: center; }
       ac.appendChild(rb);
       var ob = mk("button", "btn small", "Se déconnecter");
       ob.type = "button";
-      ob.addEventListener("click", function () { window.PlanningCloud.signOut().then(function () { location.reload(); }); });
+      ob.addEventListener("click", function () {
+        ob.disabled = true;
+        window.PlanningCloud.signOut().then(function () { location.reload(); }, function () { location.reload(); });
+      });
       ac.appendChild(ob);
       pop.appendChild(ac);
     }
@@ -4204,24 +4207,6 @@ label.btn { display: inline-flex; align-items: center; }
       b.type = "button";
       b.addEventListener("click", fn);
       return b;
-    }
-    if (!gmcp && window.PlanningCloud) {
-      if (cloudUser) {
-        pop.appendChild(mk("h4", "", "Compte"));
-        pop.appendChild(mk("p", "gm", "Connecté · " + cloudUser.email));
-        pop.appendChild(mk("p", "gh", "Tes tâches et notes sont enregistrées en ligne. Gmail et Google Agenda arriveront dans une prochaine étape."));
-        var ac = mk("div", "gact");
-        ac.appendChild(btn("Se déconnecter", "btn small", function () { window.PlanningCloud.signOut().then(function () { location.reload(); }); }));
-        pop.appendChild(ac);
-      } else {
-        pop.appendChild(mk("h4", "", "Se connecter"));
-        pop.appendChild(mk("p", "gm", "Connecte-toi avec Google pour enregistrer tes données en ligne et les retrouver sur tous tes appareils."));
-        var ac2 = mk("div", "gact");
-        ac2.appendChild(btn("Se connecter avec Google", "btn small primary", function () { window.PlanningCloud.signIn(); }));
-        pop.appendChild(ac2);
-        pop.appendChild(mk("p", "gh", "Tant que tu n'es pas connecté, tout reste sur cet appareil."));
-      }
-      return;
     }
     if (!gmcp) {
       pop.appendChild(mk("h4", "", "Google Agenda indisponible ici"));
