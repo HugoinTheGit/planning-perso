@@ -3553,7 +3553,8 @@ label.btn { display: inline-flex; align-items: center; }
     host.appendChild(wrap);
   }
   function mailStateMsg(host, st, retry) {
-    if (st === "auth") mailMsg(host, "Gmail n'est pas connecté à ton compte Claude. Ajoute-le dans Paramètres → Connecteurs, puis recharge la page.");
+    if (st === "auth" && window.PlanningCloud) mailMsg(host, "Ta connexion Google a expiré (elle dure environ 1 heure).", "Reconnecter Google", function () { window.PlanningCloud.signIn(); });
+    else if (st === "auth") mailMsg(host, "Gmail n'est pas connecté à ton compte Claude. Ajoute-le dans Paramètres → Connecteurs, puis recharge la page.");
     else if (st === "perm") mailMsg(host, "Autorise l'accès à Gmail pour afficher ton courrier ici.", "Autoriser", retry);
     else mailMsg(host, "Impossible de charger le courrier pour le moment.", "Réessayer", retry);
   }
@@ -4178,6 +4179,24 @@ label.btn { display: inline-flex; align-items: center; }
     });
   }
   function renderGpop() {
+    renderGpopInner();
+    if (window.PlanningCloud && cloudUser) {
+      var pop = el("gpop");
+      pop.appendChild(mk("div", "gsec", "Compte"));
+      pop.appendChild(mk("p", "gm", "Connecté · " + cloudUser.email));
+      var ac = mk("div", "gact");
+      var rb = mk("button", "btn small", "Reconnecter Google");
+      rb.type = "button";
+      rb.addEventListener("click", function () { window.PlanningCloud.signIn(); });
+      ac.appendChild(rb);
+      var ob = mk("button", "btn small", "Se déconnecter");
+      ob.type = "button";
+      ob.addEventListener("click", function () { window.PlanningCloud.signOut().then(function () { location.reload(); }); });
+      ac.appendChild(ob);
+      pop.appendChild(ac);
+    }
+  }
+  function renderGpopInner() {
     var pop = el("gpop");
     pop.textContent = "";
     function btn(label, cls, fn) {
@@ -4245,7 +4264,9 @@ label.btn { display: inline-flex; align-items: center; }
       return;
     }
     pop.appendChild(mk("h4", "", "Google Agenda"));
-    if (g.st === "auth") {
+    if (g.st === "auth" && window.PlanningCloud) {
+      pop.appendChild(mk("p", "gm", "Ta connexion Google a expiré (environ 1 heure). Utilise « Reconnecter Google » ci-dessous."));
+    } else if (g.st === "auth") {
       pop.appendChild(mk("p", "gm", "Pas encore connecté. Ajoute ou reconnecte Google Agenda dans Claude (Paramètres → Connecteurs), puis recharge la page."));
     } else if (g.st === "perm") {
       pop.appendChild(mk("p", "gm", "Autorise cette page à lire ton agenda pour afficher tes réunions."));
@@ -4291,6 +4312,10 @@ label.btn { display: inline-flex; align-items: center; }
   renderAvatar();
   (async function () {
     try { gmcp = window.claude && window.claude.use ? await window.claude.use("mcp") : null; } catch (e) { gmcp = null; }
+    if (!(window.claude && window.claude.use)) {
+      await loadCloud();
+      gmcp = cloudUser && window.GoogleApi ? window.GoogleApi.mcp : null;
+    }
     g.st = gmcp ? "idle" : "off";
     gResolved = true;
     renderAvatar();
@@ -4309,17 +4334,22 @@ label.btn { display: inline-flex; align-items: center; }
       document.head.appendChild(sc);
     });
   }
-  async function loadCloud() {
-    try {
-      await loadScript("config.js");
-      await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js");
-      await loadScript("supabase-db.js");
-    } catch (e) { return null; }
-    if (!window.PlanningCloud) return null;
-    var d = await window.PlanningCloud.init();
-    cloudUser = window.PlanningCloud.user();
-    renderAvatar();
-    return d;
+  var cloudP = null;
+  function loadCloud() {
+    if (!cloudP) cloudP = (async function () {
+      try {
+        await loadScript("config.js");
+        await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js");
+        await loadScript("google-api.js");
+        await loadScript("supabase-db.js");
+      } catch (e) { return null; }
+      if (!window.PlanningCloud) return null;
+      var d = await window.PlanningCloud.init();
+      cloudUser = window.PlanningCloud.user();
+      renderAvatar();
+      return d;
+    })();
+    return cloudP;
   }
   async function migrateLocal() {
     var snap = await db.collection("jours").limit(2000).get();

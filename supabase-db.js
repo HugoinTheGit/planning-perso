@@ -8,6 +8,9 @@
   });
   var session = null;
   var listeners = [];
+  function grab(s) {
+    if (s && s.provider_token && window.GoogleApi) window.GoogleApi.setToken(s.provider_token);
+  }
   function uid() { return session && session.user ? session.user.id : null; }
   function fail(r) { if (r && r.error) throw r.error; return r; }
 
@@ -101,9 +104,11 @@
     init: function () {
       return sb.auth.getSession().then(function (r) {
         session = r && r.data ? r.data.session : null;
+        grab(session);
         sb.auth.onAuthStateChange(function (ev, s) {
           var was = uid();
           session = s;
+          grab(s);
           if (uid() !== was) listeners.forEach(function (f) { try { f(ev); } catch (e) {} });
         });
         return session ? db : null;
@@ -112,8 +117,15 @@
     user: function () { return session && session.user ? { id: session.user.id, email: session.user.email || "" } : null; },
     onUserChange: function (f) { listeners.push(f); },
     signIn: function () {
-      return sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + location.pathname } });
+      return sb.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: location.origin + location.pathname,
+          scopes: "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.readonly",
+          queryParams: { access_type: "offline", prompt: "consent" }
+        }
+      });
     },
-    signOut: function () { return sb.auth.signOut().then(function () { session = null; }); }
+    signOut: function () { if (window.GoogleApi) window.GoogleApi.clearToken(); return sb.auth.signOut().then(function () { session = null; }); }
   };
 })();
