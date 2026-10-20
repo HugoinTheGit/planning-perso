@@ -11,7 +11,7 @@ Site : https://hugointhegit.github.io/planning-perso/
 - `supabase-db.js` : synchronisation des tâches, notes, tags, réglages + connexion Google
 - `google-api.js` : lecture de Gmail et Google Agenda
 - `supabase/migrations/` : tables SQL (`0001_init.sql`, `0002_google_tokens.sql`)
-- `supabase/functions/` : `google-link` (garde le jeton de renouvellement) et `google-token` (donne un jeton frais)
+- `supabase/functions/google-auth/` : fonction unique (garde le jeton de renouvellement et donne un jeton Google frais). Son nom dans Supabase est réglé dans `config.js` (`googleFn`).
 
 ## Déjà fait
 1. Dépôt GitHub public + GitHub Pages (branche `main`, dossier racine).
@@ -22,7 +22,7 @@ Site : https://hugointhegit.github.io/planning-perso/
 
 ## À faire une seule fois (connexion durable, sans expiration après 1 h)
 1. SQL Editor : coller et exécuter `supabase/migrations/0002_google_tokens.sql`.
-2. Edge Functions → créer `google-link` et `google-token` : coller le contenu des fichiers `index.ts`, puis **désactiver « Verify JWT »** sur chacune, puis Deploy.
+2. Edge Functions → créer une fonction, coller `supabase/functions/google-auth/index.ts`, **désactiver « Verify JWT »**, Deploy. Si son nom n'est pas `dynamic-task`, le mettre dans `config.js`.
 3. Edge Functions → Secrets : ajouter `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` (mêmes valeurs que dans Google Cloud). Ne jamais les mettre dans le dépôt.
 4. Sur le site : avatar → « Reconnecter Google » (une fois, pour enregistrer le jeton).
 

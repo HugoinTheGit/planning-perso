@@ -9,7 +9,7 @@
   var session = null;
   var listeners = [];
   function fn(name, jwt, body) {
-    return fetch(cfg.url + "/functions/v1/" + name, {
+    return fetch(cfg.url + "/functions/v1/" + (cfg.googleFn || "google-auth"), {
       method: "POST",
       headers: { Authorization: "Bearer " + jwt, apikey: cfg.publishableKey, "Content-Type": "application/json" },
       body: JSON.stringify(body || {})
@@ -21,13 +21,13 @@
     if (!s || !window.GoogleApi) return;
     if (s.provider_token) window.GoogleApi.setToken(s.provider_token);
     if (s.provider_refresh_token) {
-      fn("google-link", s.access_token, { refresh_token: s.provider_refresh_token }).then(function (r) {
+      fn("", s.access_token, { action: "link", refresh_token: s.provider_refresh_token }).then(function (r) {
         if (r.ok) { try { localStorage.removeItem("pp-link-err"); } catch (e) {} }
       }, function () {});
     }
   }
   if (window.GoogleApi) window.GoogleApi.configure({
-    url: cfg.url, key: cfg.publishableKey,
+    url: cfg.url, key: cfg.publishableKey, fn: cfg.googleFn || "google-auth",
     jwt: function () { return sb.auth.getSession().then(function (r) { return r && r.data && r.data.session ? r.data.session.access_token : ""; }); }
   });
   function uid() { return session && session.user ? session.user.id : null; }

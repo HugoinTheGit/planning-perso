@@ -2,5 +2,7 @@
 // Ne jamais mettre ici la clé secrète / service_role.
 window.SUPABASE_CONFIG = {
   url: "https://wkvsnjcwwmvcxwbxoxgq.supabase.co",
-  publishableKey: "sb_publishable_p-zxT8RE_6s_osITuiYIMA_6XB72u46"
+  publishableKey: "sb_publishable_p-zxT8RE_6s_osITuiYIMA_6XB72u46",
+  // Nom de la fonction Supabase qui gère le jeton Google
+  googleFn: "dynamic-task"
 };

@@ -1,5 +1,2 @@
-[functions.google-link]
-verify_jwt = false
-
-[functions.google-token]
+[functions.google-auth]
 verify_jwt = false

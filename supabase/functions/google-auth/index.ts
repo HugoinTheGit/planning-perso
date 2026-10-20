@@ -1,4 +1,4 @@
-// Renvoie un jeton d'accès Google frais (valable ~1 h) à l'utilisateur connecté.
+// Une seule fonction : action "link" (enregistre le jeton de renouvellement) ou "token" (renvoie un jeton Google frais).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 
 const cors = {
@@ -15,7 +15,20 @@ Deno.serve(async (req) => {
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data, error } = await admin.auth.getUser(jwt);
   if (error || !data.user) return json({ error: "unauthorized" }, 401);
-  const { data: row } = await admin.from("google_tokens").select("refresh_token").eq("user_id", data.user.id).maybeSingle();
+  const uid = data.user.id;
+  const body = await req.json().catch(() => ({}));
+
+  if (body.action === "link") {
+    const rt = typeof body.refresh_token === "string" ? body.refresh_token : "";
+    if (!rt) return json({ error: "missing refresh_token" }, 400);
+    const { error: e2 } = await admin.from("google_tokens").upsert({
+      user_id: uid, refresh_token: rt, updated_at: new Date().toISOString(),
+    });
+    if (e2) return json({ error: "db" }, 500);
+    return json({ ok: true });
+  }
+
+  const { data: row } = await admin.from("google_tokens").select("refresh_token").eq("user_id", uid).maybeSingle();
   if (!row) return json({ error: "not_linked" }, 404);
   const r = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
@@ -29,7 +42,7 @@ Deno.serve(async (req) => {
   });
   const j = await r.json().catch(() => ({}));
   if (!r.ok || !j.access_token) {
-    if (j.error === "invalid_grant") await admin.from("google_tokens").delete().eq("user_id", data.user.id);
+    if (j.error === "invalid_grant") await admin.from("google_tokens").delete().eq("user_id", uid);
     return json({ error: j.error || "google" }, 401);
   }
   return json({ access_token: j.access_token, expires_in: j.expires_in || 3600 });

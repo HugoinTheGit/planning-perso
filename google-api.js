@@ -27,10 +27,10 @@
     if (inflight) return inflight;
     inflight = Promise.resolve(conf.jwt()).then(function (jwt) {
       if (!jwt) return "";
-      return fetch(conf.url + "/functions/v1/google-token", {
+      return fetch(conf.url + "/functions/v1/" + conf.fn, {
         method: "POST",
         headers: { Authorization: "Bearer " + jwt, apikey: conf.key, "Content-Type": "application/json" },
-        body: "{}"
+        body: JSON.stringify({ action: "token" })
       }).then(function (r) {
         return r.json().catch(function () { return {}; }).then(function (j) {
           if (r.ok && j.access_token) { setToken(j.access_token, Math.max(60000, ((j.expires_in || 3600) - 120) * 1000)); return j.access_token; }
