@@ -1,5 +1,10 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>Planning perso</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
 <style>
 /* Calendrier façon Notion : vues Mois, Semaine, 3 jours (même grille, mêmes cellules) et Jour (bandeau de 7 jours + page du jour). Un clic sur un jour ouvre la page du jour en grande fenêtre ; réglages, export et recherche utilisent exactement la même fenêtre. */
@@ -822,6 +827,8 @@ label.btn { display: inline-flex; align-items: center; }
   .modal { animation: none; }
 }
 </style>
+</head>
+<body>
 
 <div class="app" id="app">
   <section class="cal" aria-label="Calendrier">
@@ -3089,7 +3096,7 @@ label.btn { display: inline-flex; align-items: center; }
     addPendingNew();
     flush(sel);
     var btns = [el("dayExpBtn"), el("dayExpIn")];
-    if (!dl) { say("Téléchargement indisponible dans cette vue."); return; }
+    if (!dl) { say("Téléchargement indisponible."); return; }
     btns.forEach(function (b) { b.disabled = true; });
     try {
       var res = buildPdf([{ key: sel, tasks: ordered(sel), notes: notes[sel] || "" }], sel, sel);
@@ -3394,7 +3401,7 @@ label.btn { display: inline-flex; align-items: center; }
     var r = expDays();
     var msg = el("expMsg");
     if (r.err || !r.days.length) return;
-    if (!dl) { msg.textContent = "Le téléchargement n'est pas disponible dans cette vue."; return; }
+    if (!dl) { msg.textContent = "Le téléchargement n'est pas disponible."; return; }
     var btn = el("expGo");
     btn.disabled = true;
     msg.textContent = expFmt === "pdf" ? "Création du PDF…" : "Création du fichier…";
@@ -3553,9 +3560,7 @@ label.btn { display: inline-flex; align-items: center; }
     host.appendChild(wrap);
   }
   function mailStateMsg(host, st, retry) {
-    if (st === "auth" && window.PlanningCloud) mailMsg(host, "Ta connexion Google a expiré (elle dure environ 1 heure).", "Reconnecter Google", function () { window.PlanningCloud.signIn(); });
-    else if (st === "auth") mailMsg(host, "Gmail n'est pas connecté à ton compte Claude. Ajoute-le dans Paramètres → Connecteurs, puis recharge la page.");
-    else if (st === "perm") mailMsg(host, "Autorise l'accès à Gmail pour afficher ton courrier ici.", "Autoriser", retry);
+    if (st === "auth" || st === "perm") mailMsg(host, st === "auth" ? "Ta connexion Google a expiré." : "L'accès à Gmail n'est pas autorisé.", "Reconnecter Google", function () { window.PlanningCloud.signIn(); });
     else mailMsg(host, "Impossible de charger le courrier pour le moment.", "Réessayer", retry);
   }
   function renderMail() {
@@ -3566,7 +3571,9 @@ label.btn { display: inline-flex; align-items: center; }
     list.hidden = false;
     list.textContent = "";
     if (!gmcp) {
-      mailMsg(list, gResolved ? "Le courrier fonctionne quand la page est ouverte depuis Claude, avec Gmail connecté à ton compte." : "Chargement…");
+      if (!gResolved) mailMsg(list, "Chargement…");
+      else if (!window.PlanningCloud) mailMsg(list, "La connexion Google n'a pas pu se charger. Vérifie ta connexion internet puis recharge la page.");
+      else mailMsg(list, "Connecte-toi avec Google pour lire ton courrier ici.", "Se connecter avec Google", function () { window.PlanningCloud.signIn(); });
       return;
     }
     if (mail.st === "idle" || (mail.st === "loading" && !mail.threads.length)) { mailMsg(list, "Chargement du courrier…"); return; }
@@ -3886,7 +3893,7 @@ label.btn { display: inline-flex; align-items: center; }
   });
   el("mailRefresh").addEventListener("click", function () { msr.pst = "idle"; mail.open = null; mail.tseq++; mailLoad(false, true); });
 
-  /* ---------- Google Agenda (connecteur Claude) ---------- */
+  /* ---------- Google Agenda ---------- */
   var GSRV = "Google Calendar";
   var GLS = "planning-perso-gcal-v1";
   var gmcp = null;
@@ -4099,17 +4106,16 @@ label.btn { display: inline-flex; align-items: center; }
     if (!rec || (rec.pending && !rec.list && !rec.err)) { body.appendChild(mk("p", "gmsg", "Chargement des réunions…")); return; }
     if (rec.err && !rec.list) {
       var st = gState(rec.err), msg, label = "Réessayer";
-      if (st === "perm") { msg = "Autorise l'accès à Google Agenda pour voir tes réunions ici."; label = "Autoriser"; }
-      else if (rec.err === "needs_reauth") msg = "La connexion à Google Agenda a expiré. Reconnecte-la dans Claude (Paramètres → Connecteurs), puis recharge la page.";
-      else if (st === "auth") msg = "Google Agenda n'est pas connecté à ton compte Claude. Ajoute-le dans Paramètres → Connecteurs, puis recharge la page.";
+      var reco = st === "perm" || st === "auth";
+      if (st === "perm") msg = "L'accès à Google Agenda n'est pas autorisé.";
+      else if (st === "auth") msg = "Ta connexion Google a expiré.";
       else msg = "Impossible de charger les réunions pour le moment.";
+      if (reco) label = "Reconnecter Google";
       body.appendChild(mk("p", "gmsg", msg));
-      if (st === "perm" || st === "error") {
-        var b = mk("button", "btn small", label);
-        b.type = "button";
-        b.addEventListener("click", function () { gLoadDay(sel, true); });
-        body.appendChild(b);
-      }
+      var b = mk("button", "btn small", label);
+      b.type = "button";
+      b.addEventListener("click", function () { if (reco && window.PlanningCloud) window.PlanningCloud.signIn(); else gLoadDay(sel, true); });
+      body.appendChild(b);
       return;
     }
     var list = rec.list || [];
@@ -4179,25 +4185,39 @@ label.btn { display: inline-flex; align-items: center; }
     });
   }
   function renderGpop() {
-    renderGpopInner();
-    if (window.PlanningCloud && cloudUser) {
-      var pop = el("gpop");
-      pop.appendChild(mk("div", "gsec", "Compte"));
-      pop.appendChild(mk("p", "gm", "Connecté · " + cloudUser.email));
-      var ac = mk("div", "gact");
-      var rb = mk("button", "btn small", "Reconnecter Google");
-      rb.type = "button";
-      rb.addEventListener("click", function () { window.PlanningCloud.signIn(); });
-      ac.appendChild(rb);
-      var ob = mk("button", "btn small", "Se déconnecter");
-      ob.type = "button";
-      ob.addEventListener("click", function () {
-        ob.disabled = true;
-        window.PlanningCloud.signOut().then(function () { location.reload(); }, function () { location.reload(); });
-      });
-      ac.appendChild(ob);
-      pop.appendChild(ac);
+    var pop = el("gpop");
+    function btn(label, cls, fn) {
+      var b = mk("button", cls, label);
+      b.type = "button";
+      b.addEventListener("click", fn);
+      return b;
     }
+    if (!window.PlanningCloud) {
+      pop.textContent = "";
+      pop.appendChild(mk("h4", "", "Connexion indisponible"));
+      pop.appendChild(mk("p", "gm", "La connexion Google n'a pas pu se charger. Vérifie ta connexion internet puis recharge la page."));
+      return;
+    }
+    if (!cloudUser) {
+      pop.textContent = "";
+      pop.appendChild(mk("h4", "", "Se connecter"));
+      pop.appendChild(mk("p", "gm", "Connecte-toi avec Google pour enregistrer tes données en ligne et afficher tes mails et tes réunions."));
+      var ac0 = mk("div", "gact");
+      ac0.appendChild(btn("Se connecter avec Google", "btn small primary", function () { window.PlanningCloud.signIn(); }));
+      pop.appendChild(ac0);
+      pop.appendChild(mk("p", "gh", "Tant que tu n'es pas connecté, tes tâches restent sur cet appareil."));
+      return;
+    }
+    renderGpopInner();
+    pop.appendChild(mk("div", "gsec", "Compte"));
+    pop.appendChild(mk("p", "gm", "Connecté · " + cloudUser.email));
+    var ac = mk("div", "gact");
+    ac.appendChild(btn("Reconnecter Google", "btn small", function () { window.PlanningCloud.signIn(); }));
+    ac.appendChild(btn("Se déconnecter", "btn small", function (e) {
+      e.currentTarget.disabled = true;
+      window.PlanningCloud.signOut().then(function () { location.reload(); }, function () { location.reload(); });
+    }));
+    pop.appendChild(ac);
   }
   function renderGpopInner() {
     var pop = el("gpop");
@@ -4207,11 +4227,6 @@ label.btn { display: inline-flex; align-items: center; }
       b.type = "button";
       b.addEventListener("click", fn);
       return b;
-    }
-    if (!gmcp) {
-      pop.appendChild(mk("h4", "", "Google Agenda indisponible ici"));
-      pop.appendChild(mk("p", "gm", "La connexion fonctionne quand la page est ouverte depuis Claude, avec Google Agenda connecté à ton compte."));
-      return;
     }
     if (gConnected()) {
       pop.appendChild(mk("h4", "", "Google Agenda"));
@@ -4245,18 +4260,14 @@ label.btn { display: inline-flex; align-items: center; }
         gRetry();
       }));
       pop.appendChild(act);
-      pop.appendChild(mk("p", "gh", "Autre compte Google : partage son agenda avec le compte connecté (Google Agenda → Paramètres de l'agenda → Partager), il apparaîtra dans la liste. Pour changer de compte : Claude → Paramètres → Connecteurs."));
+      pop.appendChild(mk("p", "gh", "Autre agenda : partage-le avec ton compte Google (Google Agenda → Paramètres de l'agenda → Partager), il apparaîtra dans la liste."));
       return;
     }
     pop.appendChild(mk("h4", "", "Google Agenda"));
-    if (g.st === "auth" && window.PlanningCloud) {
-      pop.appendChild(mk("p", "gm", "Ta connexion Google a expiré (environ 1 heure). Utilise « Reconnecter Google » ci-dessous."));
-    } else if (g.st === "auth") {
-      pop.appendChild(mk("p", "gm", "Pas encore connecté. Ajoute ou reconnecte Google Agenda dans Claude (Paramètres → Connecteurs), puis recharge la page."));
-    } else if (g.st === "perm") {
-      pop.appendChild(mk("p", "gm", "Autorise cette page à lire ton agenda pour afficher tes réunions."));
+    if (g.st === "auth" || g.st === "perm") {
+      pop.appendChild(mk("p", "gm", g.st === "auth" ? "Ta connexion Google a expiré. Reconnecte-toi pour revoir tes réunions et tes mails." : "L'accès à Gmail et à Google Agenda n'est pas autorisé. Reconnecte-toi et accepte les accès demandés."));
       var a2 = mk("div", "gact");
-      a2.appendChild(btn("Autoriser", "btn small primary", function () { gLoadDay(sel, true).then(function () { gLoadCals(); }); }));
+      a2.appendChild(btn("Reconnecter Google", "btn small primary", function () { window.PlanningCloud.signIn(); }));
       pop.appendChild(a2);
     } else if (g.st === "error") {
       pop.appendChild(mk("p", "gm", "Connexion impossible pour le moment."));
@@ -4264,10 +4275,7 @@ label.btn { display: inline-flex; align-items: center; }
       a3.appendChild(btn("Réessayer", "btn small", gRetry));
       pop.appendChild(a3);
     } else {
-      pop.appendChild(mk("p", "gm", "Connecte ton agenda pour voir tes réunions sous les notes de chaque jour."));
-      var a4 = mk("div", "gact");
-      a4.appendChild(btn("Connecter Google Agenda", "btn small primary", function () { gLoadDay(sel, true).then(function () { gLoadCals(); }); }));
-      pop.appendChild(a4);
+      pop.appendChild(mk("p", "gm", "Chargement…"));
     }
   }
   function toggleGpop(open) {
@@ -4296,11 +4304,8 @@ label.btn { display: inline-flex; align-items: center; }
   }, 60000);
   renderAvatar();
   (async function () {
-    try { gmcp = window.claude && window.claude.use ? await window.claude.use("mcp") : null; } catch (e) { gmcp = null; }
-    if (!(window.claude && window.claude.use)) {
-      await loadCloud();
-      gmcp = cloudUser && window.GoogleApi ? window.GoogleApi.mcp : null;
-    }
+    await loadCloud();
+    gmcp = cloudUser && window.GoogleApi ? window.GoogleApi.mcp : null;
     g.st = gmcp ? "idle" : "off";
     gResolved = true;
     renderAvatar();
@@ -4308,7 +4313,7 @@ label.btn { display: inline-flex; align-items: center; }
     if (appMode === "mail" && gmcp && mail.st === "idle") mailLoad(); else renderMail();
   })();
 
-  /* ---------- Hors Claude : Supabase (connexion Google + données en ligne) ---------- */
+  /* ---------- Connexion Google, données en ligne (Supabase) et téléchargements ---------- */
   var cloudUser;
   function loadScript(src) {
     return new Promise(function (res, rej) {
@@ -4318,6 +4323,26 @@ label.btn { display: inline-flex; align-items: center; }
       sc.onerror = function () { rej(new Error("script")); };
       document.head.appendChild(sc);
     });
+  }
+  function localDownloader() {
+    return {
+      save: function (o) {
+        return new Promise(function (resolve, reject) {
+          try {
+            var blob = o.data instanceof Blob ? o.data : new Blob([o.data]);
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = o.filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(function () { URL.revokeObjectURL(url); }, 20000);
+            resolve();
+          } catch (e) { reject(e); }
+        });
+      }
+    };
   }
   var cloudP;
   function loadCloud() {
@@ -4359,17 +4384,14 @@ label.btn { display: inline-flex; align-items: center; }
   renderFilters();
   setMode(appMode);
   (async function () {
-    try { dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch (e) { dl = null; }
+    dl = localDownloader();
     if (editorVisible()) renderHead();
   })();
   (async function () {
-    try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch (e) { db = null; }
-    if (!(window.claude && window.claude.use)) {
-      db = await loadCloud();
-      if (db) {
-        loadLocal();
-        try { await migrateLocal(); } catch (e) {}
-      }
+    db = await loadCloud();
+    if (db) {
+      loadLocal();
+      try { await migrateLocal(); } catch (e) {}
     }
     if (db) {
       db.collection("jours").onSnapshot(function (snap) {
@@ -4446,3 +4468,5 @@ label.btn { display: inline-flex; align-items: center; }
   })();
 })();
 </script>
+</body>
+</html>

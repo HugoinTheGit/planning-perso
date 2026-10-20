@@ -6,23 +6,46 @@
   var CAL = "https://www.googleapis.com/calendar/v3";
   var cache = {};
 
-  function getToken() {
+  var conf = null, inflight = null;
+  function readTok() {
     try {
       var o = JSON.parse(localStorage.getItem(TK) || "null");
       if (o && typeof o.t === "string" && o.exp > Date.now()) return o.t;
     } catch (e) {}
     return "";
   }
-  function setToken(t) {
-    try { localStorage.setItem(TK, JSON.stringify({ t: t, exp: Date.now() + 55 * 60 * 1000 })); } catch (e) {}
+  function setToken(t, ttlMs) {
+    try { localStorage.setItem(TK, JSON.stringify({ t: t, exp: Date.now() + (ttlMs || 55 * 60 * 1000) })); } catch (e) {}
   }
   function clearToken() { try { localStorage.removeItem(TK); } catch (e) {} }
+  /* conf : { url, key, jwt() -> Promise<string> } ; sert à demander un jeton Google frais à la fonction google-token */
+  function configure(c) { conf = c; }
+  function getToken() {
+    var t = readTok();
+    if (t) return Promise.resolve(t);
+    if (!conf) return Promise.resolve("");
+    if (inflight) return inflight;
+    inflight = Promise.resolve(conf.jwt()).then(function (jwt) {
+      if (!jwt) return "";
+      return fetch(conf.url + "/functions/v1/google-token", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + jwt, apikey: conf.key, "Content-Type": "application/json" },
+        body: "{}"
+      }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (r.ok && j.access_token) { setToken(j.access_token, Math.max(60000, ((j.expires_in || 3600) - 120) * 1000)); return j.access_token; }
+          return "";
+        });
+      });
+    }).catch(function () { return ""; }).then(function (t2) { inflight = null; return t2; });
+    return inflight;
+  }
   function err(code, msg) { var e = new Error(msg || code); e.code = code; return e; }
 
   function api(url) {
-    var tok = getToken();
-    if (!tok) return Promise.reject(err("needs_reauth"));
-    return fetch(url, { headers: { Authorization: "Bearer " + tok } }).then(function (r) {
+    return getToken().then(function (tok) {
+      if (!tok) throw err("needs_reauth");
+      return fetch(url, { headers: { Authorization: "Bearer " + tok } }).then(function (r) {
       if (r.status === 401) { clearToken(); throw err("needs_reauth"); }
       if (r.status === 403) {
         return r.json().catch(function () { return {}; }).then(function (j) {
@@ -33,7 +56,8 @@
       }
       if (!r.ok) throw err("upstream_error");
       return r.json();
-    }, function () { throw err("upstream_error"); });
+      }, function () { throw err("upstream_error"); });
+    });
   }
   function qs(o) {
     return Object.keys(o).filter(function (k) { return o[k] !== undefined && o[k] !== ""; })
@@ -160,5 +184,5 @@
       return Promise.resolve();
     }
   };
-  window.GoogleApi = { mcp: mcp, setToken: setToken, hasToken: function () { return !!getToken(); }, clearToken: clearToken };
+  window.GoogleApi = { mcp: mcp, setToken: setToken, configure: configure, hasToken: function () { return !!readTok() || !!conf; }, clearToken: clearToken };
 })();

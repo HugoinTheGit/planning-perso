@@ -1,0 +1,5 @@
+[functions.google-link]
+verify_jwt = false
+
+[functions.google-token]
+verify_jwt = false

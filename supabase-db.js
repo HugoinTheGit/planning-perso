@@ -8,9 +8,28 @@
   });
   var session = null;
   var listeners = [];
-  function grab(s) {
-    if (s && s.provider_token && window.GoogleApi) window.GoogleApi.setToken(s.provider_token);
+  function fn(name, jwt, body) {
+    return fetch(cfg.url + "/functions/v1/" + name, {
+      method: "POST",
+      headers: { Authorization: "Bearer " + jwt, apikey: cfg.publishableKey, "Content-Type": "application/json" },
+      body: JSON.stringify(body || {})
+    });
   }
+  /* Au retour de Google : on donne le jeton de renouvellement au serveur (fonction google-link),
+     qui le garde pour fournir des jetons frais ensuite. Repli : jeton valable ~1 h. */
+  function grab(s) {
+    if (!s || !window.GoogleApi) return;
+    if (s.provider_token) window.GoogleApi.setToken(s.provider_token);
+    if (s.provider_refresh_token) {
+      fn("google-link", s.access_token, { refresh_token: s.provider_refresh_token }).then(function (r) {
+        if (r.ok) { try { localStorage.removeItem("pp-link-err"); } catch (e) {} }
+      }, function () {});
+    }
+  }
+  if (window.GoogleApi) window.GoogleApi.configure({
+    url: cfg.url, key: cfg.publishableKey,
+    jwt: function () { return sb.auth.getSession().then(function (r) { return r && r.data && r.data.session ? r.data.session.access_token : ""; }); }
+  });
   function uid() { return session && session.user ? session.user.id : null; }
   function fail(r) { if (r && r.error) throw r.error; return r; }
 
