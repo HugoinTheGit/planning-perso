@@ -42,6 +42,21 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
 .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
 .back{margin-top:18px;text-align:center;font-size:14.5px}
 .back a{color:var(--muted);text-decoration:none}.back a:hover{text-decoration:underline}
+
+/* demande d'accès */
+.access{margin:26px 0 0;padding-top:22px;border-top:1px solid var(--line)}
+.access h2{font:700 20px var(--font-display);letter-spacing:-.01em;margin:0 0 6px}
+.access p{margin:0 0 14px;color:var(--muted);font-size:15px}
+.access form{margin-top:16px;display:grid;gap:14px}
+.access label{display:grid;gap:5px;font-weight:600;font-size:14.5px}
+.access label small{font-weight:400;color:var(--muted)}
+.access input,.access select,.access textarea{width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:400 16px var(--font-body)}
+.access textarea{min-height:84px;resize:vertical}
+.access input:focus-visible,.access select:focus-visible,.access textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.access .ok{display:none;border:1px solid var(--line);background:var(--soft);border-radius:8px;padding:12px 14px;font-size:14.5px}
+.access .ok.on{display:block}
+.access .ok a{color:var(--accent);font-weight:600}
+.access .ok button{margin-top:10px}
 /* panneau visuel */
 .right{display:none;background:var(--soft);border-left:1px solid var(--line);padding:48px;align-content:center}
 @media(min-width:960px){.right{display:grid}}
@@ -75,6 +90,47 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
         </ul>
         Lecture seule : rien n'est envoyé, modifié ni supprimé.
       </div>
+
+
+      <section class="access" id="access" aria-labelledby="accTitle">
+        <h2 id="accTitle">Pas encore d'accès ?</h2>
+        <p>L'application est en phase de test : pour te connecter avec Google, ton adresse Google doit d'abord être ajoutée à la liste des testeurs. Fais une demande, c'est rapide.</p>
+        <button class="btn" id="reqToggle" type="button" aria-expanded="false" aria-controls="reqForm">Demander un accès</button>
+        <form id="reqForm" hidden novalidate>
+          <label>Ton adresse Google (Gmail)
+            <input type="email" id="rqMail" name="mail" autocomplete="email" placeholder="toi@gmail.com" required>
+            <small>Utilise l'adresse avec laquelle tu te connecteras.</small>
+          </label>
+          <label>Ton prénom <small>(facultatif)</small>
+            <input type="text" id="rqName" name="name" autocomplete="given-name">
+          </label>
+          <label>Pourquoi veux-tu essayer ?
+            <select id="rqWhy">
+              <option>Organiser mes tâches</option>
+              <option>Voir mes réunions et mes mails au même endroit</option>
+              <option>Remplacer un autre outil</option>
+              <option>Par curiosité</option>
+              <option>Autre</option>
+            </select>
+          </label>
+          <label>Tu l'utiliserais pour…
+            <select id="rqUse"><option>Le perso</option><option>Le travail</option><option>Les deux</option></select>
+          </label>
+          <label>Sur quel appareil ?
+            <select id="rqDev"><option>Téléphone</option><option>Ordinateur</option><option>Les deux</option></select>
+          </label>
+          <label>Un mot en plus <small>(facultatif)</small>
+            <textarea id="rqMsg" maxlength="500"></textarea>
+          </label>
+          <button class="btn primary" type="submit">Envoyer ma demande par e-mail</button>
+          <p class="msg" id="rqErr" role="alert"></p>
+        </form>
+        <div class="ok" id="rqOk" role="status">
+          Ton application de messagerie va s'ouvrir avec le message prêt à envoyer : il ne reste qu'à appuyer sur « Envoyer ».
+          <br>Rien ne s'est ouvert ? <a id="rqLink" href="#">Clique ici</a>, ou copie le message.
+          <br><button class="btn" id="rqCopy" type="button">Copier le message</button>
+        </div>
+      </section>
 
       <div class="or">ou</div>
       <a class="btn" href="../../">Continuer sans compte</a>
@@ -127,6 +183,50 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
       fail("La connexion n'a pas pu se charger. Vérifie ta connexion internet puis recharge la page.");
     }
   })();
+
+
+  /* demande d'accès : prépare un e-mail vers l'auteur (aucun serveur, rien n'est stocké) */
+  var OWNER = "hugo.gaspar.logiciel@gmail.com";
+  var tg = document.getElementById("reqToggle"), fm = document.getElementById("reqForm"), ok = document.getElementById("rqOk"), er = document.getElementById("rqErr");
+  var lastText = "";
+  tg.addEventListener("click", function () {
+    var open = fm.hidden;
+    fm.hidden = !open;
+    tg.setAttribute("aria-expanded", String(open));
+    if (open) document.getElementById("rqMail").focus();
+  });
+  fm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    er.textContent = ""; er.className = "msg";
+    var mail = document.getElementById("rqMail").value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) { er.textContent = "Saisis une adresse e-mail valide."; er.className = "msg err"; document.getElementById("rqMail").focus(); return; }
+    var v = function (id) { return document.getElementById(id).value.trim(); };
+    lastText = [
+      "Bonjour,",
+      "",
+      "Je souhaite essayer Planning perso avec mon compte Google.",
+      "",
+      "Adresse Google : " + mail,
+      v("rqName") ? "Prénom : " + v("rqName") : "",
+      "Pourquoi : " + v("rqWhy"),
+      "Usage : " + v("rqUse"),
+      "Appareil : " + v("rqDev"),
+      v("rqMsg") ? "Message : " + v("rqMsg") : "",
+      "",
+      "Merci !"
+    ].filter(function (l, i, a) { return l !== "" || (a[i - 1] !== "" && i > 0); }).join("\r\n");
+    var href = "mailto:" + OWNER + "?subject=" + encodeURIComponent("Demande d'accès à Planning perso") + "&body=" + encodeURIComponent(lastText);
+    var link = document.getElementById("rqLink");
+    link.href = href;
+    ok.classList.add("on");
+    location.href = href;
+  });
+  document.getElementById("rqCopy").addEventListener("click", function () {
+    var b = this;
+    var done = function () { b.textContent = "Message copié ✓"; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(lastText + "\r\n\r\n(à envoyer à " + OWNER + ")").then(done, function () { b.textContent = "Copie impossible"; });
+    else b.textContent = "Copie impossible";
+  });
 
   go.addEventListener("click", async function () {
     if (!sb) return;
