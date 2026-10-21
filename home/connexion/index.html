@@ -47,7 +47,7 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
 .access{margin:26px 0 0;padding-top:22px;border-top:1px solid var(--line)}
 .access h2{font:700 20px var(--font-display);letter-spacing:-.01em;margin:0 0 6px}
 .access p{margin:0 0 14px;color:var(--muted);font-size:15px}
-.access form{margin-top:16px;display:grid;gap:14px}
+.access form{margin-top:16px;display:grid;gap:14px;position:relative}
 .access label{display:grid;gap:5px;font-weight:600;font-size:14.5px}
 .access label small{font-weight:400;color:var(--muted)}
 .access input,.access select,.access textarea{width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:400 16px var(--font-body)}
@@ -94,15 +94,14 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
 
       <section class="access" id="access" aria-labelledby="accTitle">
         <h2 id="accTitle">Pas encore d'accès ?</h2>
-        <p>L'application est en phase de test : pour te connecter avec Google, ton adresse Google doit d'abord être ajoutée à la liste des testeurs. Fais une demande, c'est rapide.</p>
-        <button class="btn" id="reqToggle" type="button" aria-expanded="false" aria-controls="reqForm">Demander un accès</button>
-        <form id="reqForm" hidden novalidate>
+        <p>L'application est en phase de test : pour te connecter avec Google, ton adresse Google doit d'abord être ajoutée à la liste des testeurs. Remplis ce court formulaire, ta demande m'arrive directement.</p>
+        <form id="reqForm" novalidate>
           <label>Ton adresse Google (Gmail)
             <input type="email" id="rqMail" name="mail" autocomplete="email" placeholder="toi@gmail.com" required>
             <small>Utilise l'adresse avec laquelle tu te connecteras.</small>
           </label>
           <label>Ton prénom <small>(facultatif)</small>
-            <input type="text" id="rqName" name="name" autocomplete="given-name">
+            <input type="text" id="rqName" name="name" autocomplete="given-name" maxlength="60">
           </label>
           <label>Pourquoi veux-tu essayer ?
             <select id="rqWhy">
@@ -122,13 +121,13 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
           <label>Un mot en plus <small>(facultatif)</small>
             <textarea id="rqMsg" maxlength="500"></textarea>
           </label>
-          <button class="btn primary" type="submit">Envoyer ma demande par e-mail</button>
+          <input type="text" id="rqTrap" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+          <button class="btn primary" id="rqSend" type="submit">Demander l'accès</button>
           <p class="msg" id="rqErr" role="alert"></p>
         </form>
         <div class="ok" id="rqOk" role="status">
-          Ton application de messagerie va s'ouvrir avec le message prêt à envoyer : il ne reste qu'à appuyer sur « Envoyer ».
-          <br>Rien ne s'est ouvert ? <a id="rqLink" href="#">Clique ici</a>, ou copie le message.
-          <br><button class="btn" id="rqCopy" type="button">Copier le message</button>
+          <b>Merci, ta demande est envoyée.</b><br>
+          Dès que ton adresse est ajoutée à la liste des testeurs, tu pourras te connecter avec Google. En attendant, tu peux déjà utiliser l'application sans compte.
         </div>
       </section>
 
@@ -185,47 +184,29 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
   })();
 
 
-  /* demande d'accès : prépare un e-mail vers l'auteur (aucun serveur, rien n'est stocké) */
-  var OWNER = "hugo.gaspar.logiciel@gmail.com";
-  var tg = document.getElementById("reqToggle"), fm = document.getElementById("reqForm"), ok = document.getElementById("rqOk"), er = document.getElementById("rqErr");
-  var lastText = "";
-  tg.addEventListener("click", function () {
-    var open = fm.hidden;
-    fm.hidden = !open;
-    tg.setAttribute("aria-expanded", String(open));
-    if (open) document.getElementById("rqMail").focus();
-  });
-  fm.addEventListener("submit", function (e) {
+  /* demande d'accès : enregistrée directement dans Supabase (table access_requests, ajout seulement) */
+  var fm = document.getElementById("reqForm"), ok = document.getElementById("rqOk"), er = document.getElementById("rqErr"), send = document.getElementById("rqSend");
+  function showDone() { fm.hidden = true; ok.classList.add("on"); ok.setAttribute("tabindex", "-1"); ok.focus(); }
+  fm.addEventListener("submit", async function (e) {
     e.preventDefault();
     er.textContent = ""; er.className = "msg";
-    var mail = document.getElementById("rqMail").value.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) { er.textContent = "Saisis une adresse e-mail valide."; er.className = "msg err"; document.getElementById("rqMail").focus(); return; }
     var v = function (id) { return document.getElementById(id).value.trim(); };
-    lastText = [
-      "Bonjour,",
-      "",
-      "Je souhaite essayer Planning perso avec mon compte Google.",
-      "",
-      "Adresse Google : " + mail,
-      v("rqName") ? "Prénom : " + v("rqName") : "",
-      "Pourquoi : " + v("rqWhy"),
-      "Usage : " + v("rqUse"),
-      "Appareil : " + v("rqDev"),
-      v("rqMsg") ? "Message : " + v("rqMsg") : "",
-      "",
-      "Merci !"
-    ].filter(function (l, i, a) { return l !== "" || (a[i - 1] !== "" && i > 0); }).join("\r\n");
-    var href = "mailto:" + OWNER + "?subject=" + encodeURIComponent("Demande d'accès à Planning perso") + "&body=" + encodeURIComponent(lastText);
-    var link = document.getElementById("rqLink");
-    link.href = href;
-    ok.classList.add("on");
-    location.href = href;
-  });
-  document.getElementById("rqCopy").addEventListener("click", function () {
-    var b = this;
-    var done = function () { b.textContent = "Message copié ✓"; };
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(lastText + "\r\n\r\n(à envoyer à " + OWNER + ")").then(done, function () { b.textContent = "Copie impossible"; });
-    else b.textContent = "Copie impossible";
+    var mail = v("rqMail");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) { er.textContent = "Saisis une adresse e-mail valide."; er.className = "msg err"; document.getElementById("rqMail").focus(); return; }
+    if (v("rqTrap")) { showDone(); return; }                       // robot : on fait semblant
+    if (!sb) { er.textContent = "Envoi impossible pour le moment. Recharge la page et réessaie."; er.className = "msg err"; return; }
+    send.disabled = true; send.textContent = "Envoi…";
+    try {
+      var r = await sb.from("access_requests").insert({
+        email: mail, name: v("rqName"), why: v("rqWhy"), usage: v("rqUse"), device: v("rqDev"), message: v("rqMsg")
+      });
+      if (r && r.error && r.error.code !== "23505") throw r.error;   // 23505 : demande déjà reçue pour cette adresse
+      showDone();
+    } catch (err) {
+      send.disabled = false; send.textContent = "Demander l'accès";
+      er.textContent = "Envoi impossible pour le moment. Réessaie dans un instant.";
+      er.className = "msg err";
+    }
   });
 
   go.addEventListener("click", async function () {

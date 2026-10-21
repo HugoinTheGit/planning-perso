@@ -26,6 +26,7 @@ Le **secret Google** et la **clé `service_role`** ne doivent jamais être dans 
    - ajouter les secrets `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` ;
    - si le nom de la fonction n'est pas `dynamic-task`, le mettre à jour dans `config.js`.
 7. Sur le site, « Reconnecter Google » une fois pour enregistrer le jeton.
+8. Exécuter `supabase/migrations/0003_access_requests.sql` : les demandes d'accès faites depuis l'écran de connexion arrivent dans Supabase → Table Editor → `access_requests`. Pour accepter quelqu'un, ajoute son adresse dans Google Cloud (Audience → Utilisateurs test) puis passe sa ligne au statut `ajouté`.
 
 ## Utilisateurs
 

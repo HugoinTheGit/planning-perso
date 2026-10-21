@@ -21,7 +21,7 @@ Page de présentation : https://hugointhegit.github.io/planning-perso/home/
 - **Sans compte** : tout reste sur ton appareil. Rien n'est envoyé en ligne.
 - **Avec une connexion Google** : tes tâches et tes notes sont sauvegardées en ligne et retrouvées sur tous tes appareils. Tu peux aussi afficher tes réunions et ton courrier.
 
-L'application est en phase de test : pour te connecter avec Google, ton adresse doit être ajoutée à la liste des testeurs. Sur l'écran de connexion, le bouton « Demander un accès » prépare un e-mail pour l'auteur.
+L'application est en phase de test : pour te connecter avec Google, ton adresse doit être ajoutée à la liste des testeurs. Sur l'écran de connexion, un court formulaire « Demander l'accès » envoie la demande directement à l'auteur.
 
 ## Tes données et ta vie privée
 
