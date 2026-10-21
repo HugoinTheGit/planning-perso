@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Connexion — Planning perso</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#fbfaf8;--surface:#fff;--ink:#2b2a27;--muted:#6f6d68;--line:#e8e6e1;--accent:#2383e2;--danger:#c4372f;--shadow:0 1px 2px rgba(30,25,15,.05),0 16px 48px rgba(30,25,15,.12);--d:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--b:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#161615;--surface:#1f1f1d;--ink:#f1f0ec;--muted:#a09e98;--line:#34332f;--accent:#4a9df0;--danger:#ff8a80;--shadow:0 1px 2px rgba(0,0,0,.4),0 16px 48px rgba(0,0,0,.5)}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px 16px;font:16px/1.55 var(--b);color:var(--ink);background:var(--bg);-webkit-text-size-adjust:100%;position:relative;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(45% 45% at 15% 10%,rgba(35,131,226,.16),transparent 70%),radial-gradient(45% 45% at 90% 90%,rgba(235,87,87,.13),transparent 70%)}
+.card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:36px 28px 28px;text-align:center}
+.logo{width:52px;height:52px;border-radius:15px;background:var(--ink);display:grid;place-items:center;margin:0 auto 18px}
+.logo svg{width:28px;height:28px;stroke:var(--bg)}
+h1{font:800 28px/1.1 var(--d);letter-spacing:-.02em;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 26px}
+.g{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;font:600 16px var(--b);padding:14px 18px;border-radius:14px;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.g:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px rgba(30,25,15,.25)}
+.g:disabled{opacity:.7;cursor:default}
+.g:focus-visible,.alt:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.g .gi{width:22px;height:22px;background:#fff;border-radius:50%;display:grid;place-items:center;flex:none}
+.g .gi svg{width:15px;height:15px}
+.msg{min-height:22px;margin:14px 0 0;font-size:14.5px;color:var(--muted)}
+.msg.err{color:var(--danger)}
+.perm{margin:20px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:14px;text-align:left;font-size:14px;color:var(--muted)}
+.perm b{display:block;color:var(--ink);font-size:14.5px;margin-bottom:6px}
+.perm ul{margin:0;padding-left:18px}
+.perm li{margin:2px 0}
+.alt{display:inline-block;margin-top:20px;color:var(--ink);font-weight:600;font-size:15px}
+.back{display:block;margin-top:10px;color:var(--muted);font-size:14px;text-decoration:none}
+.back:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></div>
+  <h1>Bon retour 👋</h1>
+  <p class="sub">Connecte-toi pour retrouver tes tâches, tes réunions et ton courrier.</p>
+
+  <button class="g" id="go" type="button" disabled>
+    <span class="gi"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23 12.27c0-.8-.07-1.56-.2-2.3H12v4.35h6.17a5.3 5.3 0 0 1-2.3 3.47v2.88h3.72C21.8 18.7 23 15.76 23 12.27z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1.03 7.6-2.8l-3.73-2.88c-1.03.7-2.35 1.1-3.87 1.1-2.98 0-5.5-2.02-6.4-4.73H1.76v2.97A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.6 14.69a6.9 6.9 0 0 1 0-4.38V7.34H1.76a11.5 11.5 0 0 0 0 10.32l3.84-2.97z"/><path fill="#EA4335" d="M12 4.58c1.68 0 3.2.58 4.38 1.71l3.28-3.28A11.1 11.1 0 0 0 12 0 11.5 11.5 0 0 0 1.76 7.34L5.6 10.3C6.5 7.6 9.02 4.58 12 4.58z"/></svg></span>
+    <span id="goLabel">Chargement…</span>
+  </button>
+  <p class="msg" id="msg" role="status"></p>
+
+  <div class="perm">
+    <b>Ce que l'application demandera à Google</b>
+    <ul>
+      <li>Lire tes événements Google Agenda</li>
+      <li>Lire tes mails Gmail</li>
+    </ul>
+    Lecture seule : rien n'est envoyé, modifié ni supprimé.
+  </div>
+
+  <a class="alt" href="../../">Continuer sans compte</a>
+  <a class="back" href="../">← Retour à la présentation</a>
+</main>
+
+<script>
+(function () {
+  var APP = new URL("../../", location.href).href;   // l'application (racine du site)
+  var go = document.getElementById("go"), label = document.getElementById("goLabel"), msg = document.getElementById("msg");
+  var sb = null;
+
+  function say(t, err) { msg.textContent = t || ""; msg.className = "msg" + (err ? " err" : ""); }
+  function load(src) {
+    return new Promise(function (ok, ko) {
+      var s = document.createElement("script");
+      s.src = src; s.onload = ok; s.onerror = function () { ko(new Error("load " + src)); };
+      document.head.appendChild(s);
+    });
+  }
+  function ready() { go.disabled = false; label.textContent = "Continuer avec Google"; }
+  function fail(t) { go.disabled = true; label.textContent = "Connexion indisponible"; say(t, true); }
+
+  (async function () {
+    try {
+      await load("../../config.js");
+      await load("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js");
+      var cfg = window.SUPABASE_CONFIG;
+      sb = window.supabase.createClient(cfg.url, cfg.publishableKey, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, flowType: "pkce" }
+      });
+      var r = await sb.auth.getSession();
+      if (r && r.data && r.data.session) {            // déjà connecté : direct dans l'application
+        label.textContent = "Ouverture de ton calendrier…";
+        location.replace(APP);
+        return;
+      }
+      ready();
+    } catch (e) {
+      fail("La connexion n'a pas pu se charger. Vérifie ta connexion internet puis recharge la page.");
+    }
+  })();
+
+  go.addEventListener("click", async function () {
+    if (!sb) return;
+    go.disabled = true; label.textContent = "Redirection vers Google…"; say("");
+    try {
+      var r = await sb.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: APP,
+          // mêmes autorisations que dans l'application (lecture seule)
+          scopes: "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.readonly",
+          queryParams: { access_type: "offline", prompt: "consent" }
+        }
+      });
+      if (r && r.error) throw r.error;
+    } catch (e) {
+      ready();
+      say("Impossible de lancer la connexion. Réessaie dans un instant.", true);
+    }
+  });
+})();
+</script>
+</body>
+</html>

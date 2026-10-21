@@ -4,102 +4,223 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Planning perso — tes tâches, ton calendrier et ton courrier</title>
-<meta name="description" content="Planning perso réunit tes tâches, ton calendrier, tes réunions Google et tes mails dans une seule page simple.">
+<meta name="description" content="Planning perso réunit tes tâches, ton calendrier, tes réunions Google et tes mails dans une seule page simple. Gratuit.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
 <style>
-body{margin:0;font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1d1d1f;-webkit-text-size-adjust:100%}
+:root{--bg:#fbfaf8;--surface:#fff;--ink:#2b2a27;--muted:#6f6d68;--line:#e8e6e1;--accent:#2383e2;--accent-soft:#e8f2fd;--today:#eb5757;--dark:#1f1e1c;--on-dark:#f4f3ef;--shadow:0 1px 2px rgba(30,25,15,.05),0 12px 40px rgba(30,25,15,.10);--d:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--b:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#161615;--surface:#1f1f1d;--ink:#f1f0ec;--muted:#a09e98;--line:#34332f;--accent:#4a9df0;--accent-soft:#1c2c3e;--dark:#0f0f0e;--on-dark:#f1f0ec;--shadow:0 1px 2px rgba(0,0,0,.4),0 12px 40px rgba(0,0,0,.45)}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font:17px/1.55 var(--b);background:var(--bg);color:var(--ink);-webkit-text-size-adjust:100%}
 a{color:inherit}
-.landing .cta{display:inline-block;text-decoration:none;text-align:center}
-/* Page d'accueil : affichée tant qu'il n'y a ni compte ni données locales */
-.landing { color: #1d1d1f; background: #fff; }
-.landing * { box-sizing: border-box; }
-.landing .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
-.landing .top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
-.landing .brand { font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
-.landing .hero { padding: 56px 0 40px; text-align: center; }
-.landing h1 { font-size: clamp(30px, 6vw, 52px); line-height: 1.08; margin: 0 0 16px; letter-spacing: -0.02em; font-weight: 750; }
-.landing .lead { font-size: 18px; line-height: 1.5; color: #555; max-width: 640px; margin: 0 auto 28px; }
-.landing .ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-.landing .cta { font: inherit; font-weight: 600; font-size: 16px; padding: 13px 22px; border-radius: 12px; border: 1px solid #1d1d1f; cursor: pointer; }
-.landing .cta.main { background: #1d1d1f; color: #fff; }
-.landing .cta.alt { background: #fff; color: #1d1d1f; }
-.landing .cta:focus-visible { outline: 3px solid #7aa7ff; outline-offset: 2px; }
-.landing .note { font-size: 13px; color: #777; margin-top: 12px; }
-.landing section.block { padding: 40px 0; border-top: 1px solid #ececec; }
-.landing h2 { font-size: 24px; margin: 0 0 18px; letter-spacing: -0.01em; }
-.landing .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
-.landing .card { border: 1px solid #ececec; border-radius: 14px; padding: 18px; }
-.landing .card h3 { margin: 0 0 6px; font-size: 16px; }
-.landing .card p { margin: 0; color: #555; line-height: 1.5; font-size: 14.5px; }
-.landing .steps { padding: 0; margin: 0; list-style: none; display: grid; gap: 14px; counter-reset: st; }
-.landing .steps li { counter-increment: st; padding-left: 40px; position: relative; line-height: 1.5; color: #333; }
-.landing .steps li::before { content: counter(st); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; background: #1d1d1f; color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center; }
-.landing .two { display: grid; gap: 28px; grid-template-columns: 1fr; }
-@media (min-width: 760px) { .landing .two { grid-template-columns: 1fr 1fr; } }
-.landing details { border-bottom: 1px solid #ececec; padding: 12px 0; }
-.landing summary { cursor: pointer; font-weight: 600; }
-.landing details p { color: #555; line-height: 1.5; margin: 8px 0 0; }
-.landing footer { padding: 28px 0 40px; border-top: 1px solid #ececec; color: #777; font-size: 13px; text-align: center; }
-.landing footer a { color: #555; }
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--d);letter-spacing:-.02em;margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:600 16px var(--b);padding:14px 24px;border-radius:14px;border:1.5px solid var(--ink);text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.btn.main{background:var(--ink);color:var(--bg)}
+.btn.main:hover{box-shadow:0 8px 24px rgba(30,25,15,.25)}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn.alt:hover{background:var(--surface)}
+.btn.small{padding:9px 16px;font-size:14.5px;border-radius:11px}
+.btn svg{width:20px;height:20px;flex:none}
+/* haut de page */
+.top{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+.brand{display:flex;align-items:center;gap:10px;font:700 20px var(--d);text-decoration:none;letter-spacing:-.01em}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--ink);display:grid;place-items:center}
+.logo svg{width:18px;height:18px;stroke:var(--bg)}
+/* héros */
+.hero{position:relative;padding:48px 0 24px;text-align:center}
+.hero::before{content:"";position:absolute;inset:-120px -20px auto -20px;height:560px;background:radial-gradient(60% 60% at 20% 20%,rgba(35,131,226,.16),transparent 70%),radial-gradient(50% 55% at 85% 10%,rgba(235,87,87,.14),transparent 70%);z-index:-1;pointer-events:none}
+.pill{display:inline-block;font:600 13.5px var(--b);padding:6px 14px;border-radius:99px;background:var(--accent-soft);color:var(--accent);margin-bottom:22px}
+.hero h1{font-size:clamp(36px,7.4vw,68px);line-height:1.02;font-weight:800;max-width:14ch;margin:0 auto 20px}
+.hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--accent),var(--today));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:clamp(17px,2.6vw,20px);color:var(--muted);max-width:600px;margin:0 auto 30px}
+.ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.note{font-size:14px;color:var(--muted);margin:14px 0 0}
+/* maquette */
+.mock{margin:48px auto 0;max-width:880px;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;text-align:left}
+.mock .bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.mock .bar i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.mock .bar span{margin-left:10px;font-size:13px;color:var(--muted)}
+.mock .body{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:760px){.mock .body{grid-template-columns:1.25fr 1fr}}
+.mock .cal{padding:18px;border-bottom:1px solid var(--line)}
+@media(min-width:760px){.mock .cal{border-bottom:0;border-right:1px solid var(--line)}}
+.mock h4{font:700 22px var(--d);margin:0 0 12px;letter-spacing:-.02em}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;font-size:12px;color:var(--muted);text-align:center}
+.week b{display:block;font:600 15px var(--d);color:var(--ink);margin-top:4px;padding:5px 0;border-radius:99px}
+.week b.today{background:var(--today);color:#fff}
+.week .dots{display:flex;justify-content:center;gap:3px;height:6px;margin-top:4px}
+.week .dots u{width:6px;height:6px;border-radius:50%;background:var(--accent);display:block}
+.week .dots u.r{background:var(--today)}
+.mock .meet{margin-top:18px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:9px 12px;font-size:14px}
+.mock .meet small{display:block;color:var(--muted);font-size:12.5px}
+.mock .day{padding:18px}
+.task{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
+.task:last-of-type{border-bottom:0}
+.chk{width:18px;height:18px;border-radius:6px;border:1.7px solid var(--muted);flex:none;display:grid;place-items:center}
+.task.done{color:var(--muted);text-decoration:line-through}
+.task.done .chk{background:var(--accent);border-color:var(--accent)}
+.task.done .chk svg{width:11px;height:11px;stroke:#fff}
+.tag{margin-left:auto;font:600 11.5px var(--b);padding:3px 9px;border-radius:99px;white-space:nowrap}
+.t1{background:#fde8e8;color:#b83a3a}.t2{background:#e4f3e8;color:#2c7a45}.t3{background:#e8effd;color:#2f5fb8}
+@media(prefers-color-scheme:dark){.t1{background:#3a2323;color:#ff9a9a}.t2{background:#1f3326;color:#8fd6a4}.t3{background:#1f2b40;color:#9bbcff}}
+/* sections */
+section.s{padding:84px 0 0}
+.eyebrow{font:700 13px var(--b);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.s h2{font-size:clamp(28px,5vw,42px);line-height:1.08;font-weight:800;max-width:20ch}
+.s .sub{color:var(--muted);max-width:56ch;margin:14px 0 0}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:36px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:16px}
+.ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.i1{background:#e8f2fd;color:#2383e2}.i2{background:#fdecec;color:#e04a4a}.i3{background:#e6f5ea;color:#2c7a45}.i4{background:#fff2dc;color:#b7791f}.i5{background:#efe9fb;color:#7a4fd1}.i6{background:#e5f3f4;color:#1f7f86}
+@media(prefers-color-scheme:dark){.i1{background:#1c2c3e}.i2{background:#3a2323}.i3{background:#1f3326}.i4{background:#3a2f1a}.i5{background:#2a2340}.i6{background:#1a3436}}
+.card h3{font-size:19px;margin-bottom:6px}
+.card p{margin:0;color:var(--muted);font-size:15.5px}
+.steps{list-style:none;margin:36px 0 0;padding:0;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));counter-reset:n}
+.steps li{counter-increment:n;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;position:relative}
+.steps li::before{content:counter(n);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);font:700 16px var(--d);margin-bottom:14px}
+.steps b{font:700 18px var(--d);display:block;margin-bottom:4px}
+.steps span{color:var(--muted);font-size:15.5px}
+/* bande sombre */
+.dark{margin-top:84px;background:var(--dark);color:var(--on-dark);padding:70px 0}
+.dark .eyebrow{color:#7cb8f5}
+.dark h2{max-width:18ch;font-size:clamp(28px,5vw,42px);font-weight:800;line-height:1.08}
+.dark ul{list-style:none;padding:0;margin:30px 0 0;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.dark li{padding:18px 20px;border:1px solid rgba(255,255,255,.14);border-radius:16px;color:#d8d6d0;font-size:15.5px}
+.dark li b{display:block;color:var(--on-dark);font:700 17px var(--d);margin-bottom:4px}
+/* FAQ */
+details{border-bottom:1px solid var(--line);padding:18px 0}
+details:first-of-type{border-top:1px solid var(--line)}
+summary{cursor:pointer;font:700 18px var(--d);list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:500 26px var(--b);color:var(--muted);line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin:10px 0 0;color:var(--muted);max-width:62ch}
+.faq{margin-top:30px}
+/* appel final */
+.final{margin:84px 0 0;text-align:center;background:linear-gradient(135deg,var(--accent-soft),var(--surface));border:1px solid var(--line);border-radius:28px;padding:56px 20px}
+.final h2{font-size:clamp(28px,5vw,44px);font-weight:800;margin:0 auto 12px;max-width:16ch;line-height:1.06}
+.final p{color:var(--muted);margin:0 auto 26px;max-width:46ch}
+footer{padding:44px 0 56px;color:var(--muted);font-size:14.5px;display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:space-between}
+footer a{text-decoration:none}
+footer a:hover{text-decoration:underline}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media(max-width:520px){.btn{width:100%}.top .btn{width:auto}}
 </style>
 </head>
 <body>
-<div class="landing" id="landing">
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>Planning perso</a>
+    <a class="btn alt small" href="connexion/">Se connecter</a>
+  </header>
+
+  <section class="hero">
+    <span class="pill">Gratuit · Sans pub · Sans installation</span>
+    <h1>Ta journée, <em>enfin</em> au même endroit.</h1>
+    <p class="lead">Tes tâches, ton calendrier, tes réunions Google et tes mails dans une seule page simple. Sur téléphone comme sur ordinateur.</p>
+    <div class="ctas">
+      <a class="btn main" href="../">Commencer sans compte</a>
+      <a class="btn alt" href="connexion/"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23 12.27c0-.8-.07-1.56-.2-2.3H12v4.35h6.17a5.3 5.3 0 0 1-2.3 3.47v2.88h3.72C21.8 18.7 23 15.76 23 12.27z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1.03 7.6-2.8l-3.73-2.88c-1.03.7-2.35 1.1-3.87 1.1-2.98 0-5.5-2.02-6.4-4.73H1.76v2.97A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.6 14.69a6.9 6.9 0 0 1 0-4.38V7.34H1.76a11.5 11.5 0 0 0 0 10.32l3.84-2.97z"/><path fill="#EA4335" d="M12 4.58c1.68 0 3.2.58 4.38 1.71l3.28-3.28A11.1 11.1 0 0 0 12 0 11.5 11.5 0 0 0 1.76 7.34L5.6 10.3C6.5 7.6 9.02 4.58 12 4.58z"/></svg>Se connecter avec Google</a>
+    </div>
+    <p class="note">Sans compte, tout reste sur ton appareil.</p>
+
+    <div class="mock" aria-hidden="true">
+      <div class="bar"><i></i><i></i><i></i><span>Planning perso</span></div>
+      <div class="body">
+        <div class="cal">
+          <h4>19–25 octobre</h4>
+          <div class="week">
+            <div>LUN<b>19</b><div class="dots"><u></u></div></div>
+            <div>MAR<b>20</b><div class="dots"><u></u><u class="r"></u></div></div>
+            <div>MER<b class="today">21</b><div class="dots"><u></u><u></u><u class="r"></u></div></div>
+            <div>JEU<b>22</b><div class="dots"></div></div>
+            <div>VEN<b>23</b><div class="dots"><u class="r"></u></div></div>
+            <div>SAM<b>24</b><div class="dots"></div></div>
+            <div>DIM<b>25</b><div class="dots"></div></div>
+          </div>
+          <div class="meet">Point équipe<small>10:00 – 11:00 · Google Agenda</small></div>
+          <div class="meet" style="border-color:var(--today);background:#fdecec22">Appel client<small>15:30 – 16:00 · Google Agenda</small></div>
+        </div>
+        <div class="day">
+          <h4>Aujourd'hui</h4>
+          <div class="task done"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>Préparer la réunion<span class="tag t3">Travail</span></div>
+          <div class="task"><span class="chk"></span>Répondre aux mails<span class="tag t1">Urgent</span></div>
+          <div class="task"><span class="chk"></span>Faire les courses<span class="tag t2">Perso</span></div>
+          <div class="task"><span class="chk"></span>Réserver le train<span class="tag t3">Voyage</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="fonctions">
+    <div class="eyebrow">Fonctions</div>
+    <h2>Tout ce qu'il faut pour ta journée</h2>
+    <p class="sub">Simple à prendre en main, rapide à utiliser, sans rien de superflu.</p>
+    <div class="grid">
+      <div class="card"><div class="ico i1"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><h3>Un calendrier clair</h3><p>Vues mois, semaine et jour. Repère tes journées chargées d'un coup d'œil.</p></div>
+      <div class="card"><div class="ico i2"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h8"/></svg></div><h3>Des tâches qui avancent</h3><p>Sous-tâches, étiquettes colorées, notes. Coche ce qui est fait.</p></div>
+      <div class="card"><div class="ico i3"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><h3>Une recherche rapide</h3><p>Retrouve une tâche, un jour ou une note en quelques lettres.</p></div>
+      <div class="card"><div class="ico i4"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 15h4"/></svg></div><h3>Tes réunions Google</h3><p>Tes événements Google Agenda s'affichent à côté de tes tâches.</p></div>
+      <div class="card"><div class="ico i5"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 8l9 6 9-6"/></svg></div><h3>Ton courrier Gmail</h3><p>Lis tes mails récents sans quitter l'application. Lecture seule.</p></div>
+      <div class="card"><div class="ico i6"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg></div><h3>Tes données t'appartiennent</h3><p>Export PDF ou JSON, import d'une sauvegarde, effacement en un clic.</p></div>
+    </div>
+  </section>
+
+  <section class="s">
+    <div class="eyebrow">Comment ça marche</div>
+    <h2>Prêt en trois étapes</h2>
+    <ol class="steps">
+      <li><b>Ouvre la page</b><span>Aucune installation, aucun formulaire. Tu peux commencer tout de suite.</span></li>
+      <li><b>Ajoute tes tâches</b><span>Jour par jour, avec des étiquettes et des notes pour t'y retrouver.</span></li>
+      <li><b>Connecte Google</b><span>Pour retrouver tes données partout, et voir tes réunions et tes mails.</span></li>
+    </ol>
+  </section>
+</div>
+
+<div class="dark">
   <div class="wrap">
-    <header class="top">
-      <span class="brand">Planning perso</span>
-      <a class="cta alt" href="../?connexion=1" style="padding:8px 14px;font-size:14px">Se connecter</a>
-    </header>
-
-    <section class="hero">
-      <h1>Ta journée, ton mois et ton courrier, au même endroit.</h1>
-      <p class="lead">Planning perso réunit tes tâches, ton calendrier, tes réunions Google et tes mails dans une seule page simple, pensée pour le téléphone comme pour l'ordinateur.</p>
-      <div class="ctas">
-        <a class="cta main" href="../">Commencer sans compte</a>
-        <a class="cta alt" href="../?connexion=1">Se connecter avec Google</a>
-      </div>
-      <p class="note">Sans compte, tout reste sur ton appareil.</p>
-    </section>
-
-    <section class="block">
-      <h2>Ce que tu peux faire</h2>
-      <div class="grid">
-        <div class="card"><h3>Planifier</h3><p>Vues mois, semaine et jour. Repère tes journées chargées d'un coup d'œil.</p></div>
-        <div class="card"><h3>Organiser ta journée</h3><p>Liste de tâches avec sous-tâches, étiquettes colorées et notes. Coche ce qui est fait.</p></div>
-        <div class="card"><h3>Retrouver vite</h3><p>Recherche dans toutes tes tâches et tes notes.</p></div>
-        <div class="card"><h3>Tes réunions</h3><p>Tes événements Google Agenda s'affichent à côté de tes tâches. Lecture seule.</p></div>
-        <div class="card"><h3>Ton courrier</h3><p>Tes mails Gmail récents, en lecture seule. Rien n'est envoyé ni supprimé.</p></div>
-        <div class="card"><h3>Tes données, à toi</h3><p>Exporte en PDF ou JSON, réimporte une sauvegarde, ou efface tout en un clic.</p></div>
-      </div>
-    </section>
-
-    <section class="block two">
-      <div>
-        <h2>Comment ça marche</h2>
-        <ol class="steps">
-          <li>Ouvre la page et commence tout de suite, sans compte.</li>
-          <li>Ajoute tes tâches jour par jour, avec des étiquettes et des notes.</li>
-          <li>Connecte-toi avec Google pour retrouver tes données sur tous tes appareils, voir tes réunions et tes mails.</li>
-        </ol>
-      </div>
-      <div>
-        <h2>Ta vie privée</h2>
-        <p style="color:#555;line-height:1.55;margin:0">Chacun ne voit que ses propres données. L'application ne peut rien modifier dans ton compte Google. Tu peux tout effacer à tout moment depuis les réglages. Le code est public et ouvert à la lecture.</p>
-      </div>
-    </section>
-
-    <section class="block">
-      <h2>Questions fréquentes</h2>
-      <details><summary>Dois-je créer un compte ?</summary><p>Non. Tu peux utiliser l'application sans compte : tout reste alors sur ton appareil.</p></details>
-      <details><summary>Mes données sont-elles perdues si je change d'appareil ?</summary><p>Pas si tu es connecté avec Google. Sans connexion, pense à faire une sauvegarde JSON depuis les réglages.</p></details>
-      <details><summary>Pourquoi la connexion Google est-elle limitée ?</summary><p>L'accès à Gmail et Google Agenda est réservé pour le moment à des comptes invités. Demande à l'auteur de t'ajouter.</p></details>
-      <details><summary>Comment effacer mes données ?</summary><p>Réglages, puis « Réinitialiser toutes les données ». Cette action est définitive.</p></details>
-    </section>
-
-    <footer>
-      Planning perso · <a href="https://github.com/HugoinTheGit/planning-perso">Code source</a>
-    </footer>
+    <div class="eyebrow">Confiance</div>
+    <h2>Ta vie privée passe avant tout</h2>
+    <ul>
+      <li><b>Chacun chez soi</b>Tu es la seule personne à voir tes données.</li>
+      <li><b>Lecture seule</b>L'application ne peut rien modifier dans ton compte Google.</li>
+      <li><b>Tu gardes la main</b>Tu peux tout effacer à tout moment depuis les réglages.</li>
+      <li><b>Code ouvert</b>Le code est public : tu peux vérifier ce qu'il fait.</li>
+    </ul>
   </div>
 </div>
 
+<div class="wrap">
+  <section class="s" id="faq" style="padding-top:70px">
+    <div class="eyebrow">Questions</div>
+    <h2>Questions fréquentes</h2>
+    <div class="faq">
+      <details><summary>Dois-je créer un compte ?</summary><p>Non. Tu peux utiliser l'application sans compte : tout reste alors sur ton appareil.</p></details>
+      <details><summary>Mes données sont-elles perdues si je change d'appareil ?</summary><p>Pas si tu es connecté avec Google. Sans connexion, pense à faire une sauvegarde JSON depuis les réglages.</p></details>
+      <details><summary>Pourquoi la connexion Google est-elle limitée ?</summary><p>L'accès à Gmail et à Google Agenda est réservé pour le moment à des comptes invités. Demande à l'auteur de t'ajouter.</p></details>
+      <details><summary>L'application peut-elle envoyer ou supprimer mes mails ?</summary><p>Non. Elle lit uniquement ton courrier et ton agenda, elle ne peut rien envoyer, modifier ni supprimer.</p></details>
+      <details><summary>Comment effacer mes données ?</summary><p>Réglages, puis « Réinitialiser toutes les données ». Cette action est définitive.</p></details>
+    </div>
+  </section>
+
+  <div class="final">
+    <h2>Prends le contrôle de ta journée</h2>
+    <p>Ouvre l'application et crée ta première tâche en quelques secondes.</p>
+    <div class="ctas">
+      <a class="btn main" href="../">Commencer sans compte</a>
+      <a class="btn alt" href="connexion/">Se connecter</a>
+    </div>
+  </div>
+
+  <footer>
+    <span>© Planning perso</span>
+    <span><a href="https://github.com/HugoinTheGit/planning-perso">Code source</a></span>
+  </footer>
+</div>
 </body>
 </html>
