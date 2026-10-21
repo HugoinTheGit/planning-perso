@@ -826,117 +826,9 @@ label.btn { display: inline-flex; align-items: center; }
   .bar b { transition: none; }
   .modal { animation: none; }
 }
-
-/* Page d'accueil : affichée tant qu'il n'y a ni compte ni données locales */
-html[data-view="landing"] .app { display: none !important; }
-html[data-view="app"] .landing { display: none !important; }
-.landing { color: #1d1d1f; background: #fff; }
-.landing * { box-sizing: border-box; }
-.landing .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
-.landing .top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
-.landing .brand { font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
-.landing .hero { padding: 56px 0 40px; text-align: center; }
-.landing h1 { font-size: clamp(30px, 6vw, 52px); line-height: 1.08; margin: 0 0 16px; letter-spacing: -0.02em; font-weight: 750; }
-.landing .lead { font-size: 18px; line-height: 1.5; color: #555; max-width: 640px; margin: 0 auto 28px; }
-.landing .ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-.landing .cta { font: inherit; font-weight: 600; font-size: 16px; padding: 13px 22px; border-radius: 12px; border: 1px solid #1d1d1f; cursor: pointer; }
-.landing .cta.main { background: #1d1d1f; color: #fff; }
-.landing .cta.alt { background: #fff; color: #1d1d1f; }
-.landing .cta:focus-visible { outline: 3px solid #7aa7ff; outline-offset: 2px; }
-.landing .note { font-size: 13px; color: #777; margin-top: 12px; }
-.landing section.block { padding: 40px 0; border-top: 1px solid #ececec; }
-.landing h2 { font-size: 24px; margin: 0 0 18px; letter-spacing: -0.01em; }
-.landing .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
-.landing .card { border: 1px solid #ececec; border-radius: 14px; padding: 18px; }
-.landing .card h3 { margin: 0 0 6px; font-size: 16px; }
-.landing .card p { margin: 0; color: #555; line-height: 1.5; font-size: 14.5px; }
-.landing .steps { padding: 0; margin: 0; list-style: none; display: grid; gap: 14px; counter-reset: st; }
-.landing .steps li { counter-increment: st; padding-left: 40px; position: relative; line-height: 1.5; color: #333; }
-.landing .steps li::before { content: counter(st); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; background: #1d1d1f; color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center; }
-.landing .two { display: grid; gap: 28px; grid-template-columns: 1fr; }
-@media (min-width: 760px) { .landing .two { grid-template-columns: 1fr 1fr; } }
-.landing details { border-bottom: 1px solid #ececec; padding: 12px 0; }
-.landing summary { cursor: pointer; font-weight: 600; }
-.landing details p { color: #555; line-height: 1.5; margin: 8px 0 0; }
-.landing footer { padding: 28px 0 40px; border-top: 1px solid #ececec; color: #777; font-size: 13px; text-align: center; }
-.landing footer a { color: #555; }
 </style>
-<script>
-/* Choix de la vue au chargement (synchrone, avant l'affichage) :
-   compte Google déjà connecté ou données locales présentes -> l'application ; sinon -> page d'accueil. */
-(function () {
-  var v = "landing";
-  try {
-    var has = false;
-    var raw = localStorage.getItem("planning-perso-v1");
-    if (raw) { var o = JSON.parse(raw); has = !!((o && o.days && Object.keys(o.days).length) || (o && o.notes && Object.keys(o.notes).length)); }
-    if (!has) { var t = JSON.parse(localStorage.getItem("planning-perso-tags-v1") || "[]"); has = Array.isArray(t) && t.length > 0; }
-    if (!has) for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && /^sb-.*-auth-token$/.test(k)) { has = true; break; } }
-    if (has) v = "app";
-  } catch (e) {}
-  document.documentElement.setAttribute("data-view", v);
-})();
-</script>
 </head>
 <body>
-
-<div class="landing" id="landing">
-  <div class="wrap">
-    <header class="top">
-      <span class="brand">Planning perso</span>
-      <button class="cta alt" type="button" id="lndLogin" style="padding:8px 14px;font-size:14px">Se connecter</button>
-    </header>
-
-    <section class="hero">
-      <h1>Ta journée, ton mois et ton courrier, au même endroit.</h1>
-      <p class="lead">Planning perso réunit tes tâches, ton calendrier, tes réunions Google et tes mails dans une seule page simple, pensée pour le téléphone comme pour l'ordinateur.</p>
-      <div class="ctas">
-        <button class="cta main" type="button" id="lndStart">Commencer sans compte</button>
-        <button class="cta alt" type="button" id="lndGoogle">Se connecter avec Google</button>
-      </div>
-      <p class="note">Sans compte, tout reste sur ton appareil.</p>
-    </section>
-
-    <section class="block">
-      <h2>Ce que tu peux faire</h2>
-      <div class="grid">
-        <div class="card"><h3>Planifier</h3><p>Vues mois, semaine et jour. Repère tes journées chargées d'un coup d'œil.</p></div>
-        <div class="card"><h3>Organiser ta journée</h3><p>Liste de tâches avec sous-tâches, étiquettes colorées et notes. Coche ce qui est fait.</p></div>
-        <div class="card"><h3>Retrouver vite</h3><p>Recherche dans toutes tes tâches et tes notes.</p></div>
-        <div class="card"><h3>Tes réunions</h3><p>Tes événements Google Agenda s'affichent à côté de tes tâches. Lecture seule.</p></div>
-        <div class="card"><h3>Ton courrier</h3><p>Tes mails Gmail récents, en lecture seule. Rien n'est envoyé ni supprimé.</p></div>
-        <div class="card"><h3>Tes données, à toi</h3><p>Exporte en PDF ou JSON, réimporte une sauvegarde, ou efface tout en un clic.</p></div>
-      </div>
-    </section>
-
-    <section class="block two">
-      <div>
-        <h2>Comment ça marche</h2>
-        <ol class="steps">
-          <li>Ouvre la page et commence tout de suite, sans compte.</li>
-          <li>Ajoute tes tâches jour par jour, avec des étiquettes et des notes.</li>
-          <li>Connecte-toi avec Google pour retrouver tes données sur tous tes appareils, voir tes réunions et tes mails.</li>
-        </ol>
-      </div>
-      <div>
-        <h2>Ta vie privée</h2>
-        <p style="color:#555;line-height:1.55;margin:0">Chacun ne voit que ses propres données. L'application ne peut rien modifier dans ton compte Google. Tu peux tout effacer à tout moment depuis les réglages. Le code est public et ouvert à la lecture.</p>
-      </div>
-    </section>
-
-    <section class="block">
-      <h2>Questions fréquentes</h2>
-      <details><summary>Dois-je créer un compte ?</summary><p>Non. Tu peux utiliser l'application sans compte : tout reste alors sur ton appareil.</p></details>
-      <details><summary>Mes données sont-elles perdues si je change d'appareil ?</summary><p>Pas si tu es connecté avec Google. Sans connexion, pense à faire une sauvegarde JSON depuis les réglages.</p></details>
-      <details><summary>Pourquoi la connexion Google est-elle limitée ?</summary><p>L'accès à Gmail et Google Agenda est réservé pour le moment à des comptes invités. Demande à l'auteur de t'ajouter.</p></details>
-      <details><summary>Comment effacer mes données ?</summary><p>Réglages, puis « Réinitialiser toutes les données ». Cette action est définitive.</p></details>
-    </section>
-
-    <footer>
-      Planning perso · <a href="https://github.com/HugoinTheGit/planning-perso">Code source</a>
-    </footer>
-  </div>
-</div>
 
 <div class="app" id="app">
   <section class="cal" aria-label="Calendrier">
@@ -1256,14 +1148,14 @@ html[data-view="app"] .landing { display: none !important; }
 </div>
 
 <script>
-/* Boutons de la page d'accueil */
+/* Lien « Se connecter » depuis la page d'accueil : ouvre le panneau de connexion */
 (function () {
-  function show() { document.documentElement.setAttribute("data-view", "app"); }
-  function openAccount() { show(); setTimeout(function () { var b = document.getElementById("gav"); if (b) b.click(); }, 0); }
-  var st = document.getElementById("lndStart"), gg = document.getElementById("lndGoogle"), lg = document.getElementById("lndLogin");
-  if (st) st.addEventListener("click", show);
-  if (gg) gg.addEventListener("click", openAccount);
-  if (lg) lg.addEventListener("click", openAccount);
+  if (!/[?&]connexion=1/.test(location.search)) return;
+  var n = 0, iv = setInterval(function () {
+    var b = document.getElementById("gav");
+    if (b && ++n > 6) { clearInterval(iv); b.click(); try { history.replaceState(null, "", location.pathname); } catch (e) {} }
+    if (n > 40) clearInterval(iv);
+  }, 250);
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

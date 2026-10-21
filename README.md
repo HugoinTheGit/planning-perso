@@ -4,6 +4,8 @@ Organise ta journée, ton mois et ton courrier au même endroit, sans rien insta
 
 **Ouvrir l'application : https://hugointhegit.github.io/planning-perso/**
 
+Page de présentation : https://hugointhegit.github.io/planning-perso/home/
+
 ## Ce que tu peux faire
 
 - **Planifier** : un calendrier avec les vues mois, semaine et jour.
