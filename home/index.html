@@ -5,199 +5,225 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Planning perso — tes tâches, ton calendrier et ton courrier</title>
 <meta name="description" content="Planning perso réunit tes tâches, ton calendrier, tes réunions Google et tes mails dans une seule page simple. Gratuit.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
 <style>
-:root{--bg:#fbfaf8;--surface:#fff;--ink:#2b2a27;--muted:#6f6d68;--line:#e8e6e1;--accent:#2383e2;--accent-soft:#e8f2fd;--today:#eb5757;--dark:#1f1e1c;--on-dark:#f4f3ef;--shadow:0 1px 2px rgba(30,25,15,.05),0 12px 40px rgba(30,25,15,.10);--d:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--b:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#161615;--surface:#1f1f1d;--ink:#f1f0ec;--muted:#a09e98;--line:#34332f;--accent:#4a9df0;--accent-soft:#1c2c3e;--dark:#0f0f0e;--on-dark:#f1f0ec;--shadow:0 1px 2px rgba(0,0,0,.4),0 12px 40px rgba(0,0,0,.45)}}
+:root{--bg:#ffffff;--surface:#ffffff;--ink:#37352f;--muted:#787774;--line:#e9e9e7;--hover:#f7f7f5;--accent:#2383e2;--on-accent:#fff;--today:#eb5757;--soft:#f7f7f5;--shadow:0 1px 2px rgba(15,15,15,.04),0 10px 36px rgba(15,15,15,.09);--font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--font-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#191919;--surface:#202020;--ink:#ebebea;--muted:#9b9b9b;--line:#313131;--hover:#2b2b2b;--accent:#2f8ae6;--soft:#202020;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 36px rgba(0,0,0,.45)}}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;font:17px/1.55 var(--b);background:var(--bg);color:var(--ink);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--font-body);-webkit-text-size-adjust:100%}
 a{color:inherit}
-.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
-h1,h2,h3{font-family:var(--d);letter-spacing:-.02em;margin:0}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:600 16px var(--b);padding:14px 24px;border-radius:14px;border:1.5px solid var(--ink);text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
-.btn:hover{transform:translateY(-1px)}
-.btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-.btn.main{background:var(--ink);color:var(--bg)}
-.btn.main:hover{box-shadow:0 8px 24px rgba(30,25,15,.25)}
-.btn.alt{background:transparent;color:var(--ink)}
-.btn.alt:hover{background:var(--surface)}
-.btn.small{padding:9px 16px;font-size:14.5px;border-radius:11px}
-.btn svg{width:20px;height:20px;flex:none}
-/* haut de page */
-.top{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
-.brand{display:flex;align-items:center;gap:10px;font:700 20px var(--d);text-decoration:none;letter-spacing:-.01em}
-.logo{width:30px;height:30px;border-radius:9px;background:var(--ink);display:grid;place-items:center}
-.logo svg{width:18px;height:18px;stroke:var(--bg)}
+img{display:block;max-width:100%;height:auto}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--font-display);margin:0;letter-spacing:-.02em;font-weight:700}
+/* boutons : mêmes que dans l'application */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:9px 18px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;font:600 16px var(--font-body);text-decoration:none;cursor:pointer;transition:background .15s,filter .15s}
+.btn:hover{background:var(--hover)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{filter:brightness(.94);background:var(--accent)}
+.btn.sm{min-height:36px;padding:5px 14px;font-size:15px}
+.btn svg{width:18px;height:18px;flex:none}
+/* haut */
+.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid transparent}
+.top .in{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:700 19px var(--font-display);letter-spacing:-.01em}
+.mark{width:28px;height:28px;border-radius:8px;background:var(--accent);display:grid;place-items:center}
+.mark svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.nav{display:flex;gap:8px;align-items:center}
+.nav .link{display:none;color:var(--muted);text-decoration:none;font-weight:600;font-size:15px;padding:6px 10px}
+.nav .link:hover{color:var(--ink)}
+@media(min-width:760px){.nav .link{display:inline}}
 /* héros */
-.hero{position:relative;padding:48px 0 24px;text-align:center}
-.hero::before{content:"";position:absolute;inset:-120px -20px auto -20px;height:560px;background:radial-gradient(60% 60% at 20% 20%,rgba(35,131,226,.16),transparent 70%),radial-gradient(50% 55% at 85% 10%,rgba(235,87,87,.14),transparent 70%);z-index:-1;pointer-events:none}
-.pill{display:inline-block;font:600 13.5px var(--b);padding:6px 14px;border-radius:99px;background:var(--accent-soft);color:var(--accent);margin-bottom:22px}
-.hero h1{font-size:clamp(36px,7.4vw,68px);line-height:1.02;font-weight:800;max-width:14ch;margin:0 auto 20px}
-.hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--accent),var(--today));-webkit-background-clip:text;background-clip:text;color:transparent}
-.lead{font-size:clamp(17px,2.6vw,20px);color:var(--muted);max-width:600px;margin:0 auto 30px}
-.ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.note{font-size:14px;color:var(--muted);margin:14px 0 0}
-/* maquette */
-.mock{margin:48px auto 0;max-width:880px;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;text-align:left}
-.mock .bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line)}
-.mock .bar i{width:10px;height:10px;border-radius:50%;background:var(--line)}
-.mock .bar span{margin-left:10px;font-size:13px;color:var(--muted)}
-.mock .body{display:grid;grid-template-columns:1fr;gap:0}
-@media(min-width:760px){.mock .body{grid-template-columns:1.25fr 1fr}}
-.mock .cal{padding:18px;border-bottom:1px solid var(--line)}
-@media(min-width:760px){.mock .cal{border-bottom:0;border-right:1px solid var(--line)}}
-.mock h4{font:700 22px var(--d);margin:0 0 12px;letter-spacing:-.02em}
-.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;font-size:12px;color:var(--muted);text-align:center}
-.week b{display:block;font:600 15px var(--d);color:var(--ink);margin-top:4px;padding:5px 0;border-radius:99px}
-.week b.today{background:var(--today);color:#fff}
-.week .dots{display:flex;justify-content:center;gap:3px;height:6px;margin-top:4px}
-.week .dots u{width:6px;height:6px;border-radius:50%;background:var(--accent);display:block}
-.week .dots u.r{background:var(--today)}
-.mock .meet{margin-top:18px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:9px 12px;font-size:14px}
-.mock .meet small{display:block;color:var(--muted);font-size:12.5px}
-.mock .day{padding:18px}
-.task{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
-.task:last-of-type{border-bottom:0}
-.chk{width:18px;height:18px;border-radius:6px;border:1.7px solid var(--muted);flex:none;display:grid;place-items:center}
-.task.done{color:var(--muted);text-decoration:line-through}
-.task.done .chk{background:var(--accent);border-color:var(--accent)}
-.task.done .chk svg{width:11px;height:11px;stroke:#fff}
-.tag{margin-left:auto;font:600 11.5px var(--b);padding:3px 9px;border-radius:99px;white-space:nowrap}
-.t1{background:#fde8e8;color:#b83a3a}.t2{background:#e4f3e8;color:#2c7a45}.t3{background:#e8effd;color:#2f5fb8}
-@media(prefers-color-scheme:dark){.t1{background:#3a2323;color:#ff9a9a}.t2{background:#1f3326;color:#8fd6a4}.t3{background:#1f2b40;color:#9bbcff}}
+.hero{padding:64px 0 0;text-align:center}
+.tagline{display:inline-flex;align-items:center;gap:8px;font:600 14px var(--font-body);color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:5px 14px 5px 10px;margin-bottom:24px;background:var(--surface)}
+.tagline i{width:8px;height:8px;border-radius:50%;background:var(--today)}
+.hero h1{font-size:clamp(38px,7.2vw,72px);line-height:1.02;max-width:15ch;margin:0 auto 20px}
+.lead{font-size:clamp(17px,2.4vw,20px);color:var(--muted);max-width:620px;margin:0 auto 30px}
+.ctas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.hint{font-size:14px;color:var(--muted);margin:14px 0 0}
+/* fenêtres de capture */
+.win{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.win .bar{display:flex;gap:6px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--soft)}
+.win .bar i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.win img{width:100%}
+.hero .win{margin:52px auto 0;max-width:1000px;text-align:left}
+.fade{position:relative}
+.fade::after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(transparent,var(--surface));pointer-events:none}
 /* sections */
-section.s{padding:84px 0 0}
-.eyebrow{font:700 13px var(--b);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-.s h2{font-size:clamp(28px,5vw,42px);line-height:1.08;font-weight:800;max-width:20ch}
-.s .sub{color:var(--muted);max-width:56ch;margin:14px 0 0}
-.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:36px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;transition:transform .2s,box-shadow .2s}
-.card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:16px}
-.ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.i1{background:#e8f2fd;color:#2383e2}.i2{background:#fdecec;color:#e04a4a}.i3{background:#e6f5ea;color:#2c7a45}.i4{background:#fff2dc;color:#b7791f}.i5{background:#efe9fb;color:#7a4fd1}.i6{background:#e5f3f4;color:#1f7f86}
-@media(prefers-color-scheme:dark){.i1{background:#1c2c3e}.i2{background:#3a2323}.i3{background:#1f3326}.i4{background:#3a2f1a}.i5{background:#2a2340}.i6{background:#1a3436}}
-.card h3{font-size:19px;margin-bottom:6px}
+.sec{padding:96px 0 0}
+.kicker{font:700 13px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.sec h2{font-size:clamp(28px,4.6vw,42px);line-height:1.08}
+.sec p.lede{color:var(--muted);margin:14px 0 0;max-width:52ch}
+.row{display:grid;gap:36px;align-items:center}
+@media(min-width:880px){.row{grid-template-columns:1fr 1.35fr;gap:56px}.row.rev{grid-template-columns:1.35fr 1fr}.row.rev .txt{order:2}}
+.ticks{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:10px}
+.ticks li{display:flex;gap:10px;align-items:flex-start;color:var(--ink);font-size:16px}
+.ticks svg{width:20px;height:20px;flex:none;margin-top:3px;stroke:var(--accent);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:99px;padding:3px 12px;font:600 13.5px var(--font-body);background:var(--surface)}
+.chip i{width:9px;height:9px;border-radius:50%}
+/* mobile */
+.phones{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.phone{width:min(260px,44vw);border:1px solid var(--line);border-radius:30px;padding:8px;background:var(--surface);box-shadow:var(--shadow)}
+.phone img{border-radius:22px;border:1px solid var(--line)}
+.phone.low{margin-top:36px}
+@media(max-width:560px){.phone.low{margin-top:0}}
+/* petites cartes */
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:32px}
+.card{border:1px solid var(--line);border-radius:12px;padding:20px;background:var(--surface)}
+.card svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-bottom:12px}
+.card h3{font-size:18px;margin-bottom:4px}
 .card p{margin:0;color:var(--muted);font-size:15.5px}
-.steps{list-style:none;margin:36px 0 0;padding:0;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));counter-reset:n}
-.steps li{counter-increment:n;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;position:relative}
-.steps li::before{content:counter(n);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);font:700 16px var(--d);margin-bottom:14px}
-.steps b{font:700 18px var(--d);display:block;margin-bottom:4px}
-.steps span{color:var(--muted);font-size:15.5px}
-/* bande sombre */
-.dark{margin-top:84px;background:var(--dark);color:var(--on-dark);padding:70px 0}
-.dark .eyebrow{color:#7cb8f5}
-.dark h2{max-width:18ch;font-size:clamp(28px,5vw,42px);font-weight:800;line-height:1.08}
-.dark ul{list-style:none;padding:0;margin:30px 0 0;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-.dark li{padding:18px 20px;border:1px solid rgba(255,255,255,.14);border-radius:16px;color:#d8d6d0;font-size:15.5px}
-.dark li b{display:block;color:var(--on-dark);font:700 17px var(--d);margin-bottom:4px}
-/* FAQ */
-details{border-bottom:1px solid var(--line);padding:18px 0}
+/* confiance */
+.trust{margin-top:96px;background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:72px 0}
+.trust .cards{margin-top:28px}
+.trust .card{background:var(--bg)}
+/* faq */
+details{border-bottom:1px solid var(--line);padding:16px 0}
 details:first-of-type{border-top:1px solid var(--line)}
-summary{cursor:pointer;font:700 18px var(--d);list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center}
+summary{cursor:pointer;font:600 18px var(--font-display);list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center}
 summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font:500 26px var(--b);color:var(--muted);line-height:1}
+summary::after{content:"+";font:400 24px var(--font-body);color:var(--muted);line-height:1}
 details[open] summary::after{content:"–"}
 details p{margin:10px 0 0;color:var(--muted);max-width:62ch}
-.faq{margin-top:30px}
-/* appel final */
-.final{margin:84px 0 0;text-align:center;background:linear-gradient(135deg,var(--accent-soft),var(--surface));border:1px solid var(--line);border-radius:28px;padding:56px 20px}
-.final h2{font-size:clamp(28px,5vw,44px);font-weight:800;margin:0 auto 12px;max-width:16ch;line-height:1.06}
-.final p{color:var(--muted);margin:0 auto 26px;max-width:46ch}
-footer{padding:44px 0 56px;color:var(--muted);font-size:14.5px;display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:space-between}
-footer a{text-decoration:none}
-footer a:hover{text-decoration:underline}
+.faq{margin-top:28px}
+/* final */
+.final{margin:96px 0 0;text-align:center;border:1px solid var(--line);border-radius:16px;background:var(--soft);padding:56px 20px}
+.final h2{font-size:clamp(28px,4.6vw,42px);margin-bottom:10px}
+.final p{color:var(--muted);margin:0 auto 24px;max-width:44ch}
+footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding:36px 0 52px;color:var(--muted);font-size:14.5px}
+footer a{text-decoration:none}footer a:hover{text-decoration:underline}
+@media(max-width:520px){.hero{padding-top:40px}.sec{padding-top:72px}.ctas .btn{width:100%}.hero .win{margin-top:36px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-@media(max-width:520px){.btn{width:100%}.top .btn{width:auto}}
 </style>
 </head>
 <body>
+<header class="top"><div class="wrap in">
+  <a class="brand" href="./"><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg></span>Planning perso</a>
+  <nav class="nav" aria-label="Navigation">
+    <a class="link" href="#fonctions">Fonctions</a>
+    <a class="link" href="#mobile">Mobile</a>
+    <a class="link" href="#faq">Questions</a>
+    <a class="btn sm" href="connexion/">Se connecter</a>
+    <a class="btn sm primary" href="../">Ouvrir l'app</a>
+  </nav>
+</div></header>
+
+<main>
 <div class="wrap">
-  <header class="top">
-    <a class="brand" href="./"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>Planning perso</a>
-    <a class="btn alt small" href="connexion/">Se connecter</a>
-  </header>
-
   <section class="hero">
-    <span class="pill">Gratuit · Sans pub · Sans installation</span>
-    <h1>Ta journée, <em>enfin</em> au même endroit.</h1>
-    <p class="lead">Tes tâches, ton calendrier, tes réunions Google et tes mails dans une seule page simple. Sur téléphone comme sur ordinateur.</p>
+    <span class="tagline"><i></i>Gratuit · Sans pub · Sans installation</span>
+    <h1>Ta journée, tes tâches et ton courrier au même endroit.</h1>
+    <p class="lead">Un calendrier simple, une checklist par jour, tes réunions Google et tes mails Gmail. Sur téléphone comme sur ordinateur.</p>
     <div class="ctas">
-      <a class="btn main" href="../">Commencer sans compte</a>
-      <a class="btn alt" href="connexion/"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23 12.27c0-.8-.07-1.56-.2-2.3H12v4.35h6.17a5.3 5.3 0 0 1-2.3 3.47v2.88h3.72C21.8 18.7 23 15.76 23 12.27z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1.03 7.6-2.8l-3.73-2.88c-1.03.7-2.35 1.1-3.87 1.1-2.98 0-5.5-2.02-6.4-4.73H1.76v2.97A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.6 14.69a6.9 6.9 0 0 1 0-4.38V7.34H1.76a11.5 11.5 0 0 0 0 10.32l3.84-2.97z"/><path fill="#EA4335" d="M12 4.58c1.68 0 3.2.58 4.38 1.71l3.28-3.28A11.1 11.1 0 0 0 12 0 11.5 11.5 0 0 0 1.76 7.34L5.6 10.3C6.5 7.6 9.02 4.58 12 4.58z"/></svg>Se connecter avec Google</a>
+      <a class="btn primary" href="../">Commencer sans compte</a>
+      <a class="btn" href="connexion/"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23 12.27c0-.8-.07-1.56-.2-2.3H12v4.35h6.17a5.3 5.3 0 0 1-2.3 3.47v2.88h3.72C21.8 18.7 23 15.76 23 12.27z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1.03 7.6-2.8l-3.73-2.88c-1.03.7-2.35 1.1-3.87 1.1-2.98 0-5.5-2.02-6.4-4.73H1.76v2.97A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.6 14.69a6.9 6.9 0 0 1 0-4.38V7.34H1.76a11.5 11.5 0 0 0 0 10.32l3.84-2.97z"/><path fill="#EA4335" d="M12 4.58c1.68 0 3.2.58 4.38 1.71l3.28-3.28A11.1 11.1 0 0 0 12 0 11.5 11.5 0 0 0 1.76 7.34L5.6 10.3C6.5 7.6 9.02 4.58 12 4.58z"/></svg>Se connecter avec Google</a>
     </div>
-    <p class="note">Sans compte, tout reste sur ton appareil.</p>
+    <p class="hint">Sans compte, tout reste sur ton appareil.</p>
+    <div class="win"><div class="bar"><i></i><i></i><i></i></div>
+      <div class="fade"><img src="img/semaine.webp" width="1600" height="651" alt="Vue semaine de Planning perso avec les tâches et les réunions de chaque jour"></div>
+    </div>
+  </section>
 
-    <div class="mock" aria-hidden="true">
-      <div class="bar"><i></i><i></i><i></i><span>Planning perso</span></div>
-      <div class="body">
-        <div class="cal">
-          <h4>19–25 octobre</h4>
-          <div class="week">
-            <div>LUN<b>19</b><div class="dots"><u></u></div></div>
-            <div>MAR<b>20</b><div class="dots"><u></u><u class="r"></u></div></div>
-            <div>MER<b class="today">21</b><div class="dots"><u></u><u></u><u class="r"></u></div></div>
-            <div>JEU<b>22</b><div class="dots"></div></div>
-            <div>VEN<b>23</b><div class="dots"><u class="r"></u></div></div>
-            <div>SAM<b>24</b><div class="dots"></div></div>
-            <div>DIM<b>25</b><div class="dots"></div></div>
-          </div>
-          <div class="meet">Point équipe<small>10:00 – 11:00 · Google Agenda</small></div>
-          <div class="meet" style="border-color:var(--today);background:#fdecec22">Appel client<small>15:30 – 16:00 · Google Agenda</small></div>
-        </div>
-        <div class="day">
-          <h4>Aujourd'hui</h4>
-          <div class="task done"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>Préparer la réunion<span class="tag t3">Travail</span></div>
-          <div class="task"><span class="chk"></span>Répondre aux mails<span class="tag t1">Urgent</span></div>
-          <div class="task"><span class="chk"></span>Faire les courses<span class="tag t2">Perso</span></div>
-          <div class="task"><span class="chk"></span>Réserver le train<span class="tag t3">Voyage</span></div>
+  <section class="sec" id="fonctions">
+    <div class="row">
+      <div class="txt">
+        <div class="kicker">Calendrier</div>
+        <h2>Ta semaine, d'un seul regard</h2>
+        <p class="lede">Passe du mois à la semaine puis au jour en un clic. Tes tâches et tes réunions Google sont réunies dans la même grille.</p>
+        <ul class="ticks">
+          <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Vues mois, semaine et jour</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Tes réunions Google Agenda à côté de tes tâches</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Le jour d'aujourd'hui toujours repéré</li>
+        </ul>
+      </div>
+      <div class="win"><img src="img/mois.webp" width="1600" height="868" loading="lazy" alt="Vue mois de Planning perso"></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="row rev">
+      <div class="txt">
+        <div class="kicker">Ta journée</div>
+        <h2>Une checklist qui avance avec toi</h2>
+        <p class="lede">Découpe en sous-tâches, classe avec des étiquettes colorées, ajoute une note. Les tâches non terminées de la veille se reprennent en un clic.</p>
+        <div class="chips">
+          <span class="chip"><i style="background:#3b8fe0"></i>Travail</span>
+          <span class="chip"><i style="background:#4caf7d"></i>Perso</span>
+          <span class="chip"><i style="background:#d9a521"></i>Courses</span>
+          <span class="chip"><i style="background:#e5534b"></i>Urgent</span>
         </div>
       </div>
+      <div class="win"><img src="img/jour.webp" width="1600" height="1220" loading="lazy" alt="Page d'une journée avec checklist, sous-tâches et étiquettes"></div>
     </div>
   </section>
 
-  <section class="s" id="fonctions">
-    <div class="eyebrow">Fonctions</div>
-    <h2>Tout ce qu'il faut pour ta journée</h2>
-    <p class="sub">Simple à prendre en main, rapide à utiliser, sans rien de superflu.</p>
-    <div class="grid">
-      <div class="card"><div class="ico i1"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><h3>Un calendrier clair</h3><p>Vues mois, semaine et jour. Repère tes journées chargées d'un coup d'œil.</p></div>
-      <div class="card"><div class="ico i2"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h8"/></svg></div><h3>Des tâches qui avancent</h3><p>Sous-tâches, étiquettes colorées, notes. Coche ce qui est fait.</p></div>
-      <div class="card"><div class="ico i3"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><h3>Une recherche rapide</h3><p>Retrouve une tâche, un jour ou une note en quelques lettres.</p></div>
-      <div class="card"><div class="ico i4"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 15h4"/></svg></div><h3>Tes réunions Google</h3><p>Tes événements Google Agenda s'affichent à côté de tes tâches.</p></div>
-      <div class="card"><div class="ico i5"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 8l9 6 9-6"/></svg></div><h3>Ton courrier Gmail</h3><p>Lis tes mails récents sans quitter l'application. Lecture seule.</p></div>
-      <div class="card"><div class="ico i6"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg></div><h3>Tes données t'appartiennent</h3><p>Export PDF ou JSON, import d'une sauvegarde, effacement en un clic.</p></div>
+  <section class="sec">
+    <div class="row">
+      <div class="txt">
+        <div class="kicker">Recherche</div>
+        <h2>Retrouve tout en quelques lettres</h2>
+        <p class="lede">Une seule barre pour chercher dans tes tâches, tes jours, tes étiquettes et tes réunions. Filtre par statut, période ou étiquette.</p>
+        <ul class="ticks">
+          <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Raccourci Ctrl + K</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Résultats en direct, même avec une partie du mot</li>
+        </ul>
+      </div>
+      <div class="win"><img src="img/recherche.webp" width="1600" height="631" loading="lazy" alt="Recherche avec filtres par statut, période et étiquettes"></div>
     </div>
   </section>
 
-  <section class="s">
-    <div class="eyebrow">Comment ça marche</div>
-    <h2>Prêt en trois étapes</h2>
-    <ol class="steps">
-      <li><b>Ouvre la page</b><span>Aucune installation, aucun formulaire. Tu peux commencer tout de suite.</span></li>
-      <li><b>Ajoute tes tâches</b><span>Jour par jour, avec des étiquettes et des notes pour t'y retrouver.</span></li>
-      <li><b>Connecte Google</b><span>Pour retrouver tes données partout, et voir tes réunions et tes mails.</span></li>
-    </ol>
+  <section class="sec">
+    <div class="row rev">
+      <div class="txt">
+        <div class="kicker">Courrier</div>
+        <h2>Ta boîte Gmail, sans quitter ta page</h2>
+        <p class="lede">Lis tes mails récents, filtre les non lus et ouvre un message pour le lire en entier. Lecture seule : rien n'est envoyé, modifié ni supprimé.</p>
+      </div>
+      <div class="win"><img src="img/courrier.webp" width="1600" height="515" loading="lazy" alt="Boîte de réception Gmail dans Planning perso"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="mobile">
+    <div style="text-align:center;margin-bottom:36px">
+      <div class="kicker">Sur téléphone</div>
+      <h2 style="margin:0 auto;max-width:18ch">Pensé pour ton pouce</h2>
+      <p class="lede" style="margin:14px auto 0">Une barre de navigation en bas de l'écran pour passer du calendrier au courrier. Ajoute le site à ton écran d'accueil pour l'ouvrir comme une application.</p>
+    </div>
+    <div class="phones">
+      <div class="phone"><img src="img/mobile-jour.webp" width="640" height="1385" loading="lazy" alt="Journée sur téléphone"></div>
+      <div class="phone low"><img src="img/mobile-courrier.webp" width="640" height="1385" loading="lazy" alt="Courrier sur téléphone"></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="kicker">Et aussi</div>
+    <h2>Tes données t'appartiennent</h2>
+    <div class="cards">
+      <div class="card"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></svg><h3>Export PDF ou JSON</h3><p>Garde une copie de tes journées sur la période de ton choix.</p></div>
+      <div class="card"><svg viewBox="0 0 24 24"><path d="M12 20V9M7.5 13.5L12 9l4.5 4.5M5 5h14"/></svg><h3>Import de sauvegarde</h3><p>Réimporte un fichier JSON : fusionne ou remplace tes données.</p></div>
+      <div class="card"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13"/></svg><h3>Effacement en un clic</h3><p>Supprime toutes tes données, en ligne et sur l'appareil, quand tu veux.</p></div>
+    </div>
   </section>
 </div>
 
-<div class="dark">
+<section class="trust">
   <div class="wrap">
-    <div class="eyebrow">Confiance</div>
+    <div class="kicker">Confiance</div>
     <h2>Ta vie privée passe avant tout</h2>
-    <ul>
-      <li><b>Chacun chez soi</b>Tu es la seule personne à voir tes données.</li>
-      <li><b>Lecture seule</b>L'application ne peut rien modifier dans ton compte Google.</li>
-      <li><b>Tu gardes la main</b>Tu peux tout effacer à tout moment depuis les réglages.</li>
-      <li><b>Code ouvert</b>Le code est public : tu peux vérifier ce qu'il fait.</li>
-    </ul>
+    <div class="cards">
+      <div class="card"><h3>Chacun chez soi</h3><p>Tu es la seule personne à voir tes tâches et tes notes.</p></div>
+      <div class="card"><h3>Lecture seule</h3><p>L'application ne peut rien modifier dans ton compte Google.</p></div>
+      <div class="card"><h3>Sans compte possible</h3><p>Tout reste sur ton appareil tant que tu ne te connectes pas.</p></div>
+      <div class="card"><h3>Code ouvert</h3><p>Le code est public : tu peux vérifier ce qu'il fait.</p></div>
+    </div>
   </div>
-</div>
+</section>
 
 <div class="wrap">
-  <section class="s" id="faq" style="padding-top:70px">
-    <div class="eyebrow">Questions</div>
+  <section class="sec" id="faq">
+    <div class="kicker">Questions</div>
     <h2>Questions fréquentes</h2>
     <div class="faq">
       <details><summary>Dois-je créer un compte ?</summary><p>Non. Tu peux utiliser l'application sans compte : tout reste alors sur ton appareil.</p></details>
@@ -212,15 +238,16 @@ footer a:hover{text-decoration:underline}
     <h2>Prends le contrôle de ta journée</h2>
     <p>Ouvre l'application et crée ta première tâche en quelques secondes.</p>
     <div class="ctas">
-      <a class="btn main" href="../">Commencer sans compte</a>
-      <a class="btn alt" href="connexion/">Se connecter</a>
+      <a class="btn primary" href="../">Commencer sans compte</a>
+      <a class="btn" href="connexion/">Se connecter</a>
     </div>
   </div>
 
   <footer>
     <span>© Planning perso</span>
-    <span><a href="https://github.com/HugoinTheGit/planning-perso">Code source</a></span>
+    <a href="https://github.com/HugoinTheGit/planning-perso">Code source</a>
   </footer>
 </div>
+</main>
 </body>
 </html>

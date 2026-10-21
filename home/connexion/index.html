@@ -5,59 +5,89 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Connexion — Planning perso</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
 <style>
-:root{--bg:#fbfaf8;--surface:#fff;--ink:#2b2a27;--muted:#6f6d68;--line:#e8e6e1;--accent:#2383e2;--danger:#c4372f;--shadow:0 1px 2px rgba(30,25,15,.05),0 16px 48px rgba(30,25,15,.12);--d:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--b:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#161615;--surface:#1f1f1d;--ink:#f1f0ec;--muted:#a09e98;--line:#34332f;--accent:#4a9df0;--danger:#ff8a80;--shadow:0 1px 2px rgba(0,0,0,.4),0 16px 48px rgba(0,0,0,.5)}}
+:root{--bg:#ffffff;--surface:#ffffff;--ink:#37352f;--muted:#787774;--line:#e9e9e7;--hover:#f7f7f5;--accent:#2383e2;--on-accent:#fff;--danger:#d44c47;--soft:#f7f7f5;--shadow:0 1px 2px rgba(15,15,15,.04),0 10px 36px rgba(15,15,15,.09);--font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--font-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media(prefers-color-scheme:dark){:root{--bg:#191919;--surface:#202020;--ink:#ebebea;--muted:#9b9b9b;--line:#313131;--hover:#2b2b2b;--accent:#2f8ae6;--danger:#ff7369;--soft:#202020;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 36px rgba(0,0,0,.45)}}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px 16px;font:16px/1.55 var(--b);color:var(--ink);background:var(--bg);-webkit-text-size-adjust:100%;position:relative;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(45% 45% at 15% 10%,rgba(35,131,226,.16),transparent 70%),radial-gradient(45% 45% at 90% 90%,rgba(235,87,87,.13),transparent 70%)}
-.card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:36px 28px 28px;text-align:center}
-.logo{width:52px;height:52px;border-radius:15px;background:var(--ink);display:grid;place-items:center;margin:0 auto 18px}
-.logo svg{width:28px;height:28px;stroke:var(--bg)}
-h1{font:800 28px/1.1 var(--d);letter-spacing:-.02em;margin:0 0 8px}
+body{margin:0;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--ink);font:16px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+a{color:inherit}
+.page{min-height:100vh;min-height:100dvh;display:grid;grid-template-columns:1fr}
+@media(min-width:960px){.page{grid-template-columns:minmax(420px,1fr) 1.2fr}}
+.left{display:flex;flex-direction:column;padding:28px 24px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:700 19px var(--font-display);letter-spacing:-.01em}
+.mark{width:28px;height:28px;border-radius:8px;background:var(--accent);display:grid;place-items:center}
+.mark svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.center{flex:1;display:grid;align-content:center;justify-items:center;padding:36px 0}
+.box{width:100%;max-width:380px}
+h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;margin:0 0 10px}
 .sub{color:var(--muted);margin:0 0 26px}
-.g{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;font:600 16px var(--b);padding:14px 18px;border-radius:14px;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer;transition:transform .15s,box-shadow .15s}
-.g:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px rgba(30,25,15,.25)}
-.g:disabled{opacity:.7;cursor:default}
-.g:focus-visible,.alt:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-.g .gi{width:22px;height:22px;background:#fff;border-radius:50%;display:grid;place-items:center;flex:none}
-.g .gi svg{width:15px;height:15px}
-.msg{min-height:22px;margin:14px 0 0;font-size:14.5px;color:var(--muted)}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:46px;padding:9px 18px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;font:600 16px var(--font-body);text-decoration:none;cursor:pointer;transition:background .15s}
+.btn:hover:not(:disabled){background:var(--hover)}
+.btn:disabled{opacity:.6;cursor:default}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn svg{width:20px;height:20px;flex:none}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover:not(:disabled){background:var(--accent);filter:brightness(.94)}
+.msg{min-height:22px;margin:12px 0 0;font-size:14.5px;color:var(--muted)}
 .msg.err{color:var(--danger)}
-.perm{margin:20px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:14px;text-align:left;font-size:14px;color:var(--muted)}
-.perm b{display:block;color:var(--ink);font-size:14.5px;margin-bottom:6px}
-.perm ul{margin:0;padding-left:18px}
-.perm li{margin:2px 0}
-.alt{display:inline-block;margin-top:20px;color:var(--ink);font-weight:600;font-size:15px}
-.back{display:block;margin-top:10px;color:var(--muted);font-size:14px;text-decoration:none}
-.back:hover{text-decoration:underline}
+.perm{margin:22px 0 0;border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:14.5px;color:var(--muted);background:var(--soft)}
+.perm b{display:block;color:var(--ink);margin-bottom:6px;font-size:15px}
+.perm ul{margin:0 0 8px;padding:0;list-style:none}
+.perm li{display:flex;gap:8px;align-items:center;margin:3px 0}
+.perm li svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13.5px;margin:22px 0 14px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.back{margin-top:18px;text-align:center;font-size:14.5px}
+.back a{color:var(--muted);text-decoration:none}.back a:hover{text-decoration:underline}
+/* panneau visuel */
+.right{display:none;background:var(--soft);border-left:1px solid var(--line);padding:48px;align-content:center}
+@media(min-width:960px){.right{display:grid}}
+.right h2{font:700 clamp(26px,2.6vw,34px)/1.1 var(--font-display);letter-spacing:-.02em;margin:0 0 8px;max-width:20ch}
+.right p{color:var(--muted);margin:0 0 28px;max-width:46ch}
+.win{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.win .bar{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--soft)}
+.win .bar i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.win img{display:block;width:100%;height:auto}
 </style>
 </head>
 <body>
-<main class="card">
-  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></div>
-  <h1>Bon retour 👋</h1>
-  <p class="sub">Connecte-toi pour retrouver tes tâches, tes réunions et ton courrier.</p>
+<div class="page">
+  <div class="left">
+    <a class="brand" href="../"><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg></span>Planning perso</a>
+    <div class="center"><div class="box">
+      <h1>Bon retour</h1>
+      <p class="sub">Connecte-toi pour retrouver tes tâches, tes réunions et ton courrier.</p>
 
-  <button class="g" id="go" type="button" disabled>
-    <span class="gi"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23 12.27c0-.8-.07-1.56-.2-2.3H12v4.35h6.17a5.3 5.3 0 0 1-2.3 3.47v2.88h3.72C21.8 18.7 23 15.76 23 12.27z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1.03 7.6-2.8l-3.73-2.88c-1.03.7-2.35 1.1-3.87 1.1-2.98 0-5.5-2.02-6.4-4.73H1.76v2.97A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.6 14.69a6.9 6.9 0 0 1 0-4.38V7.34H1.76a11.5 11.5 0 0 0 0 10.32l3.84-2.97z"/><path fill="#EA4335" d="M12 4.58c1.68 0 3.2.58 4.38 1.71l3.28-3.28A11.1 11.1 0 0 0 12 0 11.5 11.5 0 0 0 1.76 7.34L5.6 10.3C6.5 7.6 9.02 4.58 12 4.58z"/></svg></span>
-    <span id="goLabel">Chargement…</span>
-  </button>
-  <p class="msg" id="msg" role="status"></p>
+      <button class="btn" id="go" type="button" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23 12.27c0-.8-.07-1.56-.2-2.3H12v4.35h6.17a5.3 5.3 0 0 1-2.3 3.47v2.88h3.72C21.8 18.7 23 15.76 23 12.27z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1.03 7.6-2.8l-3.73-2.88c-1.03.7-2.35 1.1-3.87 1.1-2.98 0-5.5-2.02-6.4-4.73H1.76v2.97A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.6 14.69a6.9 6.9 0 0 1 0-4.38V7.34H1.76a11.5 11.5 0 0 0 0 10.32l3.84-2.97z"/><path fill="#EA4335" d="M12 4.58c1.68 0 3.2.58 4.38 1.71l3.28-3.28A11.1 11.1 0 0 0 12 0 11.5 11.5 0 0 0 1.76 7.34L5.6 10.3C6.5 7.6 9.02 4.58 12 4.58z"/></svg>
+        <span id="goLabel">Chargement…</span>
+      </button>
+      <p class="msg" id="msg" role="status"></p>
 
-  <div class="perm">
-    <b>Ce que l'application demandera à Google</b>
-    <ul>
-      <li>Lire tes événements Google Agenda</li>
-      <li>Lire tes mails Gmail</li>
-    </ul>
-    Lecture seule : rien n'est envoyé, modifié ni supprimé.
+      <div class="perm">
+        <b>Ce que l'application demandera à Google</b>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Lire tes événements Google Agenda</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Lire tes mails Gmail</li>
+        </ul>
+        Lecture seule : rien n'est envoyé, modifié ni supprimé.
+      </div>
+
+      <div class="or">ou</div>
+      <a class="btn" href="../../">Continuer sans compte</a>
+      <p class="back"><a href="../">← Retour à la présentation</a></p>
+    </div></div>
   </div>
 
-  <a class="alt" href="../../">Continuer sans compte</a>
-  <a class="back" href="../">← Retour à la présentation</a>
-</main>
+  <aside class="right" aria-hidden="true">
+    <div>
+      <h2>Retrouve ta journée là où tu l'as laissée</h2>
+      <p>Tes tâches sont enregistrées en ligne, et tes réunions et tes mails s'affichent à côté.</p>
+      <div class="win"><div class="bar"><i></i><i></i><i></i></div><img src="../img/semaine.webp" width="1600" height="651" alt=""></div>
+    </div>
+  </aside>
+</div>
 
 <script>
 (function () {
@@ -73,7 +103,7 @@ h1{font:800 28px/1.1 var(--d);letter-spacing:-.02em;margin:0 0 8px}
       document.head.appendChild(s);
     });
   }
-  function ready() { go.disabled = false; label.textContent = "Continuer avec Google"; }
+  function ready() { go.disabled = false; go.classList.add("primary"); label.textContent = "Continuer avec Google"; }
   function fail(t) { go.disabled = true; label.textContent = "Connexion indisponible"; say(t, true); }
 
   (async function () {
