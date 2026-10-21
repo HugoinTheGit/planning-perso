@@ -47,16 +47,17 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
 .access{margin:26px 0 0;padding-top:22px;border-top:1px solid var(--line)}
 .access h2{font:700 20px var(--font-display);letter-spacing:-.01em;margin:0 0 6px}
 .access p{margin:0 0 14px;color:var(--muted);font-size:15px}
-.access form{margin-top:16px;display:grid;gap:14px;position:relative}
-.access label{display:grid;gap:5px;font-weight:600;font-size:14.5px}
-.access label small{font-weight:400;color:var(--muted)}
-.access input,.access select,.access textarea{width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:400 16px var(--font-body)}
-.access textarea{min-height:84px;resize:vertical}
-.access input:focus-visible,.access select:focus-visible,.access textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-.access .ok{display:none;border:1px solid var(--line);background:var(--soft);border-radius:8px;padding:12px 14px;font-size:14.5px}
-.access .ok.on{display:block}
-.access .ok a{color:var(--accent);font-weight:600}
-.access .ok button{margin-top:10px}
+.rform{margin:0 0 22px;display:grid;gap:14px;position:relative}
+.rform label{display:grid;gap:5px;font-weight:600;font-size:14.5px}
+.rform label small{font-weight:400;color:var(--muted)}
+.rform input,.rform select,.rform textarea{width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:400 16px var(--font-body)}
+.rform textarea{min-height:84px;resize:vertical}
+.rform input:focus-visible,.rform select:focus-visible,.rform textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.done{border:1px solid var(--line);background:var(--soft);border-radius:8px;padding:16px 18px;margin:0 0 22px}
+.done b{font:700 18px var(--font-display)}
+.done p{margin:6px 0 0;color:var(--muted);font-size:15px}
+[hidden]{display:none!important}
+h1:focus{outline:none}
 /* panneau visuel */
 .right{display:none;background:var(--soft);border-left:1px solid var(--line);padding:48px;align-content:center}
 @media(min-width:960px){.right{display:grid}}
@@ -73,29 +74,44 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
   <div class="left">
     <a class="brand" href="../"><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg></span>Planning perso</a>
     <div class="center"><div class="box">
-      <h1>Bon retour</h1>
-      <p class="sub">Connecte-toi pour retrouver tes tâches, tes réunions et ton courrier.</p>
 
-      <button class="btn" id="go" type="button" disabled>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23 12.27c0-.8-.07-1.56-.2-2.3H12v4.35h6.17a5.3 5.3 0 0 1-2.3 3.47v2.88h3.72C21.8 18.7 23 15.76 23 12.27z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1.03 7.6-2.8l-3.73-2.88c-1.03.7-2.35 1.1-3.87 1.1-2.98 0-5.5-2.02-6.4-4.73H1.76v2.97A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.6 14.69a6.9 6.9 0 0 1 0-4.38V7.34H1.76a11.5 11.5 0 0 0 0 10.32l3.84-2.97z"/><path fill="#EA4335" d="M12 4.58c1.68 0 3.2.58 4.38 1.71l3.28-3.28A11.1 11.1 0 0 0 12 0 11.5 11.5 0 0 0 1.76 7.34L5.6 10.3C6.5 7.6 9.02 4.58 12 4.58z"/></svg>
-        <span id="goLabel">Chargement…</span>
-      </button>
-      <p class="msg" id="msg" role="status"></p>
+      <!-- Écran 1 : connexion -->
+      <div id="viewLogin">
+        <h1 id="hLogin" tabindex="-1">Bon retour</h1>
+        <p class="sub">Connecte-toi pour retrouver tes tâches, tes réunions et ton courrier.</p>
 
-      <div class="perm">
-        <b>Ce que l'application demandera à Google</b>
-        <ul>
-          <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Lire tes événements Google Agenda</li>
-          <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Lire tes mails Gmail</li>
-        </ul>
-        Lecture seule : rien n'est envoyé, modifié ni supprimé.
+        <button class="btn" id="go" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23 12.27c0-.8-.07-1.56-.2-2.3H12v4.35h6.17a5.3 5.3 0 0 1-2.3 3.47v2.88h3.72C21.8 18.7 23 15.76 23 12.27z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1.03 7.6-2.8l-3.73-2.88c-1.03.7-2.35 1.1-3.87 1.1-2.98 0-5.5-2.02-6.4-4.73H1.76v2.97A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.6 14.69a6.9 6.9 0 0 1 0-4.38V7.34H1.76a11.5 11.5 0 0 0 0 10.32l3.84-2.97z"/><path fill="#EA4335" d="M12 4.58c1.68 0 3.2.58 4.38 1.71l3.28-3.28A11.1 11.1 0 0 0 12 0 11.5 11.5 0 0 0 1.76 7.34L5.6 10.3C6.5 7.6 9.02 4.58 12 4.58z"/></svg>
+          <span id="goLabel">Chargement…</span>
+        </button>
+        <p class="msg" id="msg" role="status"></p>
+
+        <div class="perm">
+          <b>Ce que l'application demandera à Google</b>
+          <ul>
+            <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Lire tes événements Google Agenda</li>
+            <li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Lire tes mails Gmail</li>
+          </ul>
+          Lecture seule : rien n'est envoyé, modifié ni supprimé.
+        </div>
+
+        <section class="access" aria-labelledby="accTitle">
+          <h2 id="accTitle">Pas encore d'accès ?</h2>
+          <p>L'application est en phase de test : pour te connecter avec Google, ton adresse Google doit d'abord être ajoutée à la liste des testeurs.</p>
+          <button class="btn" id="reqOpen" type="button">Demander l'accès</button>
+        </section>
+
+        <div class="or">ou</div>
+        <a class="btn" href="../../">Continuer sans compte</a>
+        <p class="back"><a href="../">← Retour à la présentation</a></p>
       </div>
 
+      <!-- Écran 2 : demande d'accès (remplace l'écran 1) -->
+      <div id="viewRequest" hidden>
+        <h1 id="hReq" tabindex="-1">Demander l'accès</h1>
+        <p class="sub">Quelques questions rapides, puis ta demande m'arrive directement.</p>
 
-      <section class="access" id="access" aria-labelledby="accTitle">
-        <h2 id="accTitle">Pas encore d'accès ?</h2>
-        <p>L'application est en phase de test : pour te connecter avec Google, ton adresse Google doit d'abord être ajoutée à la liste des testeurs. Remplis ce court formulaire, ta demande m'arrive directement.</p>
-        <form id="reqForm" novalidate>
+        <form id="reqForm" class="rform" novalidate>
           <label>Ton adresse Google (Gmail)
             <input type="email" id="rqMail" name="mail" autocomplete="email" placeholder="toi@gmail.com" required>
             <small>Utilise l'adresse avec laquelle tu te connecteras.</small>
@@ -122,18 +138,19 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
             <textarea id="rqMsg" maxlength="500"></textarea>
           </label>
           <input type="text" id="rqTrap" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
-          <button class="btn primary" id="rqSend" type="submit">Demander l'accès</button>
+          <button class="btn primary" id="rqSend" type="submit">Envoyer ma demande</button>
           <p class="msg" id="rqErr" role="alert"></p>
         </form>
-        <div class="ok" id="rqOk" role="status">
-          <b>Merci, ta demande est envoyée.</b><br>
-          Dès que ton adresse est ajoutée à la liste des testeurs, tu pourras te connecter avec Google. En attendant, tu peux déjà utiliser l'application sans compte.
-        </div>
-      </section>
 
-      <div class="or">ou</div>
-      <a class="btn" href="../../">Continuer sans compte</a>
-      <p class="back"><a href="../">← Retour à la présentation</a></p>
+        <div class="done" id="rqOk" role="status" hidden>
+          <b>Merci, ta demande est envoyée.</b>
+          <p>Dès que ton adresse est ajoutée à la liste des testeurs, tu pourras te connecter avec Google.</p>
+        </div>
+
+        <a class="btn" href="../../">Continuer sans compte en attendant</a>
+        <p class="back"><a href="#" id="reqBack">← Retour à la connexion</a></p>
+      </div>
+
     </div></div>
   </div>
 
@@ -184,9 +201,23 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
   })();
 
 
+  /* bascule entre l'écran de connexion et l'écran de demande d'accès (le bouton « précédent » du navigateur fonctionne) */
+  var vLogin = document.getElementById("viewLogin"), vReq = document.getElementById("viewRequest");
+  function route() {
+    var req = location.hash === "#demande";
+    vLogin.hidden = req; vReq.hidden = !req;
+    var h = document.getElementById(req ? "hReq" : "hLogin");
+    if (h) h.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener("hashchange", route);
+  document.getElementById("reqOpen").addEventListener("click", function () { location.hash = "demande"; });
+  document.getElementById("reqBack").addEventListener("click", function (e) { e.preventDefault(); if (location.hash) history.back(); else route(); });
+  if (location.hash === "#demande") route();
+
   /* demande d'accès : enregistrée directement dans Supabase (table access_requests, ajout seulement) */
   var fm = document.getElementById("reqForm"), ok = document.getElementById("rqOk"), er = document.getElementById("rqErr"), send = document.getElementById("rqSend");
-  function showDone() { fm.hidden = true; ok.classList.add("on"); ok.setAttribute("tabindex", "-1"); ok.focus(); }
+  function showDone() { fm.hidden = true; ok.hidden = false; ok.setAttribute("tabindex", "-1"); ok.focus(); }
   fm.addEventListener("submit", async function (e) {
     e.preventDefault();
     er.textContent = ""; er.className = "msg";
@@ -203,7 +234,7 @@ h1{font:700 clamp(30px,5vw,38px)/1.08 var(--font-display);letter-spacing:-.02em;
       if (r && r.error && r.error.code !== "23505") throw r.error;   // 23505 : demande déjà reçue pour cette adresse
       showDone();
     } catch (err) {
-      send.disabled = false; send.textContent = "Demander l'accès";
+      send.disabled = false; send.textContent = "Envoyer ma demande";
       er.textContent = "Envoi impossible pour le moment. Réessaie dans un instant.";
       er.className = "msg err";
     }
