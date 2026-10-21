@@ -533,6 +533,7 @@ a.matt:hover { background: var(--hover); }
 .rmain { flex: 1; min-width: 0; }
 .row textarea {
   width: 100%;
+  min-height: 30px;
   border: 0;
   background: transparent;
   resize: none;
@@ -1253,7 +1254,8 @@ label.btn { display: inline-flex; align-items: center; }
     clearTimeout(msgTimer);
     msgTimer = setTimeout(function () { m.textContent = ""; }, 3500);
   }
-  function autosize(t) { t.style.height = "auto"; t.style.height = t.scrollHeight + "px"; }
+  /* Une ligne minimum : sinon un champ mesuré pendant qu'il est masqué reste écrasé (barre fine). */
+  function autosize(t) { t.style.height = "auto"; t.style.height = Math.max(t.scrollHeight, 30) + "px"; }
 
   /* ---------- Nettoyage des données ---------- */
   function cleanSubs(a) {
@@ -1749,6 +1751,7 @@ label.btn { display: inline-flex; align-items: center; }
     renderCal();
     renderModal();
     el("mBody").scrollTop = 0;
+    autosize(el("newTask"));
     if (!locked() && window.matchMedia && matchMedia("(pointer: fine)").matches) el("newTask").focus({ preventScroll: true });
     else el("modal").focus();
   }
@@ -3193,6 +3196,7 @@ label.btn { display: inline-flex; align-items: center; }
     openTagFor = null;
     openSubFor = null;
     renderModal();
+    autosize(el("newTask"));
     if (editing && window.matchMedia && matchMedia("(pointer: fine)").matches) el("newTask").focus({ preventScroll: true });
   });
   el("dayExpBtn").addEventListener("click", quickExport);
