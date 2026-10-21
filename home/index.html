@@ -6,9 +6,10 @@
 <title>Planning perso — tes tâches, ton calendrier et ton courrier</title>
 <meta name="description" content="Planning perso réunit tes tâches, ton calendrier, tes réunions Google et tes mails dans une seule page simple. Gratuit.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="accent.css">
 <style>
-:root{--bg:#ffffff;--surface:#ffffff;--ink:#37352f;--muted:#787774;--line:#e9e9e7;--hover:#f7f7f5;--accent:#2383e2;--on-accent:#fff;--today:#eb5757;--soft:#f7f7f5;--shadow:0 1px 2px rgba(15,15,15,.04),0 10px 36px rgba(15,15,15,.09);--font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--font-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#191919;--surface:#202020;--ink:#ebebea;--muted:#9b9b9b;--line:#313131;--hover:#2b2b2b;--accent:#2f8ae6;--soft:#202020;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 36px rgba(0,0,0,.45)}}
+:root{--bg:#ffffff;--surface:#ffffff;--ink:#37352f;--muted:#787774;--line:#e9e9e7;--hover:#f7f7f5;--on-accent:#fff;--today:#eb5757;--soft:#f7f7f5;--shadow:0 1px 2px rgba(15,15,15,.04),0 10px 36px rgba(15,15,15,.09);--font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--font-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#191919;--surface:#202020;--ink:#ebebea;--muted:#9b9b9b;--line:#313131;--hover:#2b2b2b;--soft:#202020;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 36px rgba(0,0,0,.45)}}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--font-body);-webkit-text-size-adjust:100%}
@@ -47,54 +48,48 @@ h1,h2,h3{font-family:var(--font-display);margin:0;letter-spacing:-.02em;font-wei
 .win .bar{display:flex;gap:6px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--soft)}
 .win .bar i{width:10px;height:10px;border-radius:50%;background:var(--line)}
 .win img{width:100%}
-.hero .win{margin:52px auto 0;max-width:1000px;text-align:left}
+.hero .win{margin:72px auto 0;max-width:1000px;text-align:left}
 .fade{position:relative}
 .fade::after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(transparent,var(--surface));pointer-events:none}
 /* sections */
-.sec{padding:96px 0 0}
-.kicker{font:700 13px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.sec{padding:152px 0 0}
+.kicker{font:700 13px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
 .sec h2{font-size:clamp(28px,4.6vw,42px);line-height:1.08}
-.sec p.lede{color:var(--muted);margin:14px 0 0;max-width:52ch}
-.row{display:grid;gap:36px;align-items:center}
+.sec p.lede{color:var(--muted);margin:18px 0 0;max-width:52ch;line-height:1.7}
+.row{display:grid;gap:48px;align-items:center}
 @media(min-width:880px){.row{grid-template-columns:1fr 1.35fr;gap:56px}.row.rev{grid-template-columns:1.35fr 1fr}.row.rev .txt{order:2}}
-.ticks{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:10px}
+.ticks{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:14px}
 .ticks li{display:flex;gap:10px;align-items:flex-start;color:var(--ink);font-size:16px}
 .ticks svg{width:20px;height:20px;flex:none;margin-top:3px;stroke:var(--accent);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
 .chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:99px;padding:3px 12px;font:600 13.5px var(--font-body);background:var(--surface)}
 .chip i{width:9px;height:9px;border-radius:50%}
-/* mobile */
-.phones{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
-.phone{width:min(260px,44vw);border:1px solid var(--line);border-radius:30px;padding:8px;background:var(--surface);box-shadow:var(--shadow)}
-.phone img{border-radius:22px;border:1px solid var(--line)}
-.phone.low{margin-top:36px}
-@media(max-width:560px){.phone.low{margin-top:0}}
 /* petites cartes */
-.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:32px}
+.cards{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:32px}
 .card{border:1px solid var(--line);border-radius:12px;padding:20px;background:var(--surface)}
 .card svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-bottom:12px}
 .card h3{font-size:18px;margin-bottom:4px}
 .card p{margin:0;color:var(--muted);font-size:15.5px}
 /* confiance */
-.trust{margin-top:96px;background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:72px 0}
-.trust .cards{margin-top:28px}
+.trust{margin-top:152px;background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:104px 0}
+.trust .cards{margin-top:36px}
 .trust .card{background:var(--bg)}
 /* faq */
-details{border-bottom:1px solid var(--line);padding:16px 0}
+details{border-bottom:1px solid var(--line);padding:22px 0}
 details:first-of-type{border-top:1px solid var(--line)}
 summary{cursor:pointer;font:600 18px var(--font-display);list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center}
 summary::-webkit-details-marker{display:none}
 summary::after{content:"+";font:400 24px var(--font-body);color:var(--muted);line-height:1}
 details[open] summary::after{content:"–"}
 details p{margin:10px 0 0;color:var(--muted);max-width:62ch}
-.faq{margin-top:28px}
+.faq{margin-top:36px}
 /* final */
-.final{margin:96px 0 0;text-align:center;border:1px solid var(--line);border-radius:16px;background:var(--soft);padding:56px 20px}
+.final{margin:152px 0 0;text-align:center;border:1px solid var(--line);border-radius:16px;background:var(--soft);padding:56px 20px}
 .final h2{font-size:clamp(28px,4.6vw,42px);margin-bottom:10px}
 .final p{color:var(--muted);margin:0 auto 24px;max-width:44ch}
-footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding:36px 0 52px;color:var(--muted);font-size:14.5px}
+footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding:56px 0 64px;color:var(--muted);font-size:14.5px}
 footer a{text-decoration:none}footer a:hover{text-decoration:underline}
-@media(max-width:520px){.hero{padding-top:40px}.sec{padding-top:72px}.ctas .btn{width:100%}.hero .win{margin-top:36px}}
+@media(max-width:520px){.hero{padding-top:40px}.sec{padding-top:104px}.ctas .btn{width:100%}.hero .win{margin-top:36px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -103,10 +98,8 @@ footer a{text-decoration:none}footer a:hover{text-decoration:underline}
   <a class="brand" href="./"><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg></span>Planning perso</a>
   <nav class="nav" aria-label="Navigation">
     <a class="link" href="#fonctions">Fonctions</a>
-    <a class="link" href="#mobile">Mobile</a>
     <a class="link" href="#faq">Questions</a>
     <a class="btn sm" href="connexion/">Se connecter</a>
-    <a class="btn sm primary" href="../">Ouvrir l'app</a>
   </nav>
 </div></header>
 
@@ -182,18 +175,6 @@ footer a{text-decoration:none}footer a:hover{text-decoration:underline}
         <p class="lede">Lis tes mails récents, filtre les non lus et ouvre un message pour le lire en entier. Lecture seule : rien n'est envoyé, modifié ni supprimé.</p>
       </div>
       <div class="win"><img src="img/courrier.webp" width="1600" height="515" loading="lazy" alt="Boîte de réception Gmail dans Planning perso"></div>
-    </div>
-  </section>
-
-  <section class="sec" id="mobile">
-    <div style="text-align:center;margin-bottom:36px">
-      <div class="kicker">Sur téléphone</div>
-      <h2 style="margin:0 auto;max-width:18ch">Pensé pour ton pouce</h2>
-      <p class="lede" style="margin:14px auto 0">Une barre de navigation en bas de l'écran pour passer du calendrier au courrier. Ajoute le site à ton écran d'accueil pour l'ouvrir comme une application.</p>
-    </div>
-    <div class="phones">
-      <div class="phone"><img src="img/mobile-jour.webp" width="640" height="1385" loading="lazy" alt="Journée sur téléphone"></div>
-      <div class="phone low"><img src="img/mobile-courrier.webp" width="640" height="1385" loading="lazy" alt="Courrier sur téléphone"></div>
     </div>
   </section>
 

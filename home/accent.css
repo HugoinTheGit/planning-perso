@@ -1,0 +1,13 @@
+/* Couleur d'accentuation animée : change doucement toutes les ~7 s (cycle de 42 s).
+   Les teintes sont choisies pour que le texte blanc reste lisible dessus. */
+@property --accent { syntax: "<color>"; inherits: true; initial-value: #1f6fc7; }
+:root { animation: accent-cycle 42s ease-in-out infinite; }
+@keyframes accent-cycle {
+  0%, 100% { --accent: #1f6fc7; }
+  16.66%   { --accent: #6d4fc4; }
+  33.33%   { --accent: #c13a7a; }
+  50%      { --accent: #b85a12; }
+  66.66%   { --accent: #1f7a55; }
+  83.33%   { --accent: #17808c; }
+}
+@media (prefers-reduced-motion: reduce) { :root { animation: none; } }
