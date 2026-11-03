@@ -135,6 +135,8 @@ kbd { font: inherit; font-size: 0.72rem; border: 1px solid var(--line); border-r
 .fbtn::after { content: "▾"; font-size: 0.7rem; }
 .fbtn:hover { background: var(--hover); }
 .fbtn.on { color: var(--ink); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+select.btn.small { appearance: auto; max-width: 150px; text-overflow: ellipsis; }
+select.btn.small.on { border-color: var(--accent); color: var(--accent); }
 .fmenu {
   position: absolute;
   top: calc(100% + 6px);
@@ -942,6 +944,7 @@ label.btn { display: inline-flex; align-items: center; }
         <div class="shead">
           <h3>Checklist</h3>
           <div class="sact">
+            <select class="btn small" id="tagFilter" aria-label="Filtrer par étiquette" title="Filtrer par étiquette"></select>
             <button class="btn small" id="sortBtn" type="button">Tri : Manuel</button>
             <button class="btn icon small" id="copyBtn" type="button" aria-label="Copier la liste" title="Copier la liste"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
             <button class="btn small" id="editBtn" type="button" hidden>Éditer</button>
@@ -1206,6 +1209,10 @@ label.btn { display: inline-flex; align-items: center; }
   var dl = null;
   var queue = {}, busy = {}, timers = {};
   var dismissed = {};
+  var DISMISS_LS = "planning-carry-ignored";
+  var dismissedFrom = (function () { try { return JSON.parse(localStorage.getItem(DISMISS_LS)) || {}; } catch (e) { return {}; } })();
+  function saveDismissed() { try { localStorage.setItem(DISMISS_LS, JSON.stringify(dismissedFrom)); } catch (e) {} }
+  var tagFilter = "";
   var modalOpen = false;
   var editing = false;
   var overlay = null;
@@ -1708,8 +1715,10 @@ label.btn { display: inline-flex; align-items: center; }
     if (k < keyOf(new Date())) return null;
     var keys = Object.keys(data).filter(function (x) { return x < k && visible(x); }).sort().reverse();
     for (var i = 0; i < keys.length; i++) {
+      if (!data[keys[i]].length) continue;
+      if (dismissedFrom[keys[i]]) return null;
       var inc = data[keys[i]].filter(function (x) { return !x.ok; });
-      if (!inc.length) continue;
+      if (!inc.length) return null;
       var have = {};
       tasksOf(k).forEach(function (x) { have[norm(x.t)] = true; });
       var cand = inc.filter(function (x) { return !have[norm(x.t)]; });
@@ -2219,10 +2228,19 @@ label.btn { display: inline-flex; align-items: center; }
     rendering = false;
     wrap.className = isPast(sel) ? "past" : "";
     var tasks = ordered(sel);
-    var manual = prefs.tri === "manuel";
+    var sf = el("tagFilter");
+    if (tagFilter && tagFilter !== "none" && !tagById(tagFilter)) tagFilter = "";
+    sf.textContent = "";
+    [["", "Tous les tags"]].concat(tags.map(function (t) { return [t.id, t.n]; }), [["none", "Sans étiquette"]]).forEach(function (o) {
+      var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1]; sf.appendChild(op);
+    });
+    sf.value = tagFilter;
+    sf.classList.toggle("on", !!tagFilter);
+    if (tagFilter) tasks = tasks.filter(function (x) { var g = x.g || []; return tagFilter === "none" ? !g.length : g.indexOf(tagFilter) >= 0; });
+    var manual = prefs.tri === "manuel" && !tagFilter;
     el("newRow").hidden = lk;
     el("mEmpty").hidden = tasks.length > 0;
-    el("mEmpty").textContent = lk
+    el("mEmpty").textContent = tagFilter ? "Aucune tâche avec ce tag." : lk
       ? "Aucune tâche pour ce jour."
       : "Aucune tâche pour ce jour. Écris-en une ci-dessous ou colle une liste entière.";
     tasks.forEach(function (x) {
@@ -2432,6 +2450,7 @@ label.btn { display: inline-flex; align-items: center; }
     data = {};
     notes = {};
     dismissed = {};
+    dismissedFrom = {}; saveDismissed();
     saveLocal();
   }
   function resetUi() {
@@ -3188,6 +3207,7 @@ label.btn { display: inline-flex; align-items: center; }
     renderCal();
   });
 
+  el("tagFilter").addEventListener("change", function () { tagFilter = this.value; renderList(); });
   el("sortBtn").addEventListener("click", function () { setPref("tri", prefs.tri === "auto" ? "manuel" : "auto"); });
   el("editBtn").addEventListener("click", function () {
     addPendingNew();
@@ -3291,7 +3311,9 @@ label.btn { display: inline-flex; align-items: center; }
     }), null);
   });
   el("carryIgnore").addEventListener("click", function () {
+    var info = carryInfo(sel);
     dismissed[sel] = true;
+    if (info) { dismissedFrom[info.from] = true; saveDismissed(); }
     renderBanner();
   });
 
