@@ -2389,6 +2389,7 @@ label.btn { display: inline-flex; align-items: center; }
   function onItemKey(e, id, ta) {
     if (e.isComposing || locked()) return;
     var tasks = ordered(sel);
+    if (tagFilter) tasks = tasks.filter(function (x) { var g = x.g || []; return tagFilter === "none" ? !g.length : g.indexOf(tagFilter) >= 0; });
     var i = tasks.findIndex(function (x) { return x.id === id; });
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
