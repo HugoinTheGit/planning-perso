@@ -135,8 +135,17 @@ kbd { font: inherit; font-size: 0.72rem; border: 1px solid var(--line); border-r
 .fbtn::after { content: "▾"; font-size: 0.7rem; }
 .fbtn:hover { background: var(--hover); }
 .fbtn.on { color: var(--ink); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
-select.btn.small { appearance: auto; max-width: 150px; text-overflow: ellipsis; }
-select.btn.small.on { border-color: var(--accent); color: var(--accent); }
+.tfd .fbtn { min-height: 32px; font-size: 0.85rem; max-width: 170px; overflow: hidden; text-overflow: ellipsis; }
+.tfd .fbtn.on { color: var(--ink); }
+.tmenu { left: auto; right: 0; min-width: 210px; z-index: 20; }
+.tmi { gap: 14px; }
+.tml { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
+.tmn { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tmc { margin-left: auto; font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tmi.on { background: var(--hover); font-weight: 600; }
+.tmi.on::after { display: none; }
+.tdot { width: 10px; height: 10px; border-radius: 50%; background: var(--tag, var(--done)); flex: none; display: inline-block; }
+.tfd .fbtn .tdot { margin-right: 6px; }
 .fmenu {
   position: absolute;
   top: calc(100% + 6px);
@@ -944,7 +953,7 @@ label.btn { display: inline-flex; align-items: center; }
         <div class="shead">
           <h3>Checklist</h3>
           <div class="sact">
-            <select class="btn small" id="tagFilter" aria-label="Filtrer par étiquette" title="Filtrer par étiquette"></select>
+            <div class="fdd tfd" id="tagDD"><button class="fbtn" id="tagFilter" type="button" aria-haspopup="true" aria-expanded="false" title="Filtrer par tag"></button><div class="fmenu tmenu" id="tagMenu" role="menu" hidden></div></div>
             <button class="btn small" id="sortBtn" type="button">Tri : Manuel</button>
             <button class="btn icon small" id="copyBtn" type="button" aria-label="Copier la liste" title="Copier la liste"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
             <button class="btn small" id="editBtn" type="button" hidden>Éditer</button>
@@ -2214,6 +2223,32 @@ label.btn { display: inline-flex; align-items: center; }
     return row;
   }
 
+  function tagFilterClose() { el("tagMenu").hidden = true; el("tagFilter").setAttribute("aria-expanded", "false"); }
+  function renderTagFilter(all) {
+    var btn = el("tagFilter"), menu = el("tagMenu");
+    var cur = tagFilter === "none" ? { n: "Sans tag" } : tagById(tagFilter);
+    btn.textContent = "";
+    if (cur && cur.c !== undefined) { var d = mk("i", "tdot"); d.style.setProperty("--tag", TAGCOL[cur.c]); btn.appendChild(d); }
+    btn.appendChild(document.createTextNode(cur ? cur.n : "Tags"));
+    btn.classList.toggle("on", !!cur);
+    menu.textContent = "";
+    function item(id, label, col, n) {
+      var b = mk("button", "mi tmi" + (tagFilter === id ? " on" : ""));
+      b.type = "button";
+      b.setAttribute("role", "menuitemradio");
+      b.setAttribute("aria-checked", String(tagFilter === id));
+      var l = mk("span", "tml");
+      if (col) { var d = mk("i", "tdot"); d.style.setProperty("--tag", col); l.appendChild(d); }
+      l.appendChild(mk("span", "tmn", label));
+      b.appendChild(l);
+      b.appendChild(mk("span", "tmc", String(n)));
+      b.addEventListener("click", function () { tagFilter = id; tagFilterClose(); renderList(); });
+      menu.appendChild(b);
+    }
+    item("", "Toutes les tâches", null, all.length);
+    tags.forEach(function (t) { item(t.id, t.n, TAGCOL[t.c], all.filter(function (x) { return (x.g || []).indexOf(t.id) >= 0; }).length); });
+    item("none", "Sans tag", null, all.filter(function (x) { return !(x.g || []).length; }).length);
+  }
   function renderList() {
     var wrap = el("mList");
     var lk = locked();
@@ -2228,14 +2263,8 @@ label.btn { display: inline-flex; align-items: center; }
     rendering = false;
     wrap.className = isPast(sel) ? "past" : "";
     var tasks = ordered(sel);
-    var sf = el("tagFilter");
     if (tagFilter && tagFilter !== "none" && !tagById(tagFilter)) tagFilter = "";
-    sf.textContent = "";
-    [["", "Tous les tags"]].concat(tags.map(function (t) { return [t.id, t.n]; }), [["none", "Sans étiquette"]]).forEach(function (o) {
-      var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1]; sf.appendChild(op);
-    });
-    sf.value = tagFilter;
-    sf.classList.toggle("on", !!tagFilter);
+    renderTagFilter(ordered(sel));
     if (tagFilter) tasks = tasks.filter(function (x) { var g = x.g || []; return tagFilter === "none" ? !g.length : g.indexOf(tagFilter) >= 0; });
     var manual = prefs.tri === "manuel" && !tagFilter;
     el("newRow").hidden = lk;
@@ -3208,7 +3237,13 @@ label.btn { display: inline-flex; align-items: center; }
     renderCal();
   });
 
-  el("tagFilter").addEventListener("change", function () { tagFilter = this.value; renderList(); });
+  el("tagFilter").addEventListener("click", function () {
+    var m = el("tagMenu"), open = m.hidden;
+    m.hidden = !open;
+    this.setAttribute("aria-expanded", String(open));
+  });
+  document.addEventListener("click", function (e) { if (!el("tagMenu").hidden && !el("tagDD").contains(e.target)) tagFilterClose(); });
+  el("tagDD").addEventListener("keydown", function (e) { if (e.key === "Escape" && !el("tagMenu").hidden) { e.stopPropagation(); tagFilterClose(); el("tagFilter").focus(); } });
   el("sortBtn").addEventListener("click", function () { setPref("tri", prefs.tri === "auto" ? "manuel" : "auto"); });
   el("editBtn").addEventListener("click", function () {
     addPendingNew();
