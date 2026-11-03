@@ -1658,7 +1658,11 @@ label.btn { display: inline-flex; align-items: center; }
   function addOne(text) {
     var t = text.trim().slice(0, 200);
     if (!t) return;
-    insertTasks([{ id: uid(), t: t, ok: false }], null);
+    insertTasks(withFilterTag([{ id: uid(), t: t, ok: false }]), null);
+  }
+  function withFilterTag(items) {
+    if (tagFilter && tagFilter !== "none" && tagById(tagFilter)) items.forEach(function (x) { if (!x.g) x.g = [tagFilter]; });
+    return items;
   }
   function addPendingNew() {
     var nt = el("newTask");
@@ -2413,7 +2417,7 @@ label.btn { display: inline-flex; align-items: center; }
     if (!txt || !/\r?\n/.test(txt.trim())) return;
     e.preventDefault();
     var items = parseLines(txt);
-    if (items.length) insertTasks(items, afterId);
+    if (items.length) insertTasks(withFilterTag(items), afterId);
   }
   function onItemKey(e, id, ta) {
     if (e.isComposing || locked()) return;
